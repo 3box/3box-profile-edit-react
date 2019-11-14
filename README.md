@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [![Discord](https://img.shields.io/discord/484729862368526356.svg?style=for-the-badge)](https://discordapp.com/invite/Z3f3Cxy)
 [![npm](https://img.shields.io/npm/v/3box-chatbox-react.svg?style=for-the-badge)](https://www.npmjs.com/package/3box-chatbox-react)
 [![Twitter Follow](https://img.shields.io/twitter/follow/3boxdb.svg?style=for-the-badge&label=Twitter)](https://twitter.com/3boxdb)
@@ -131,3 +132,7 @@ const MyComponent = ({ handleLogin, box, ethereum, myAddress, currentUser3BoxPro
 ## License
 
 MIT
+=======
+# 3box-profile
+An easy way to add user profiles to your react app
+>>>>>>> 35d58c9376fbe3dd12a646b71289b028aabd1631

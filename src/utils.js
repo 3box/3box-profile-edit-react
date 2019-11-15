@@ -34,20 +34,14 @@ export const copyToClipBoard = (type, message) => async (dispatch) => {
   }
 };
 
+// the first field after emoji is the one that doesnt save
 export const editProfileFields = [
+  ['emoji', 'public'],
   ['verifiedGithub', 'public'],
   ['verifiedTwitter', 'public'],
+  ['verifiedEmail', 'private'],
   ['name', 'public'],
   ['description', 'public'],
-  ['location', 'public'],
-  ['website', 'public'],
-  ['employer', 'public'],
-  ['job', 'public'],
-  ['school', 'public'],
-  ['degree', 'public'],
-  ['major', 'public'],
-  ['year', 'public'],
-  ['emoji', 'public'],
-  ['verifiedEmail', 'private'],
-  ['birthday', 'private'],
+  ['image', 'public'],
+  ['coverPhoto', 'public'],
 ];

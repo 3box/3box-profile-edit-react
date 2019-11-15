@@ -30,6 +30,7 @@ class Example extends React.Component {
 
     const box = await Box.openBox(myAddress, window.ethereum, {});
     const myProfile = await Box.getProfile(myAddress);
+    console.log('myProfile', myProfile);
 
     box.onSyncDone(() => this.setState({ box }));
     this.setState({ box, myProfile, myAddress, isReady: true });
@@ -56,8 +57,9 @@ class Example extends React.Component {
               appImage='https://i.imgur.com/RXJO8FD.png'
               spaceName='3box_test'
               currentUserAddr={myAddress}
-
-
+              
+              
+              currentUser3BoxProfile={myProfile}
 
               // required
               threadName='ghostChatTest'
@@ -80,7 +82,6 @@ class Example extends React.Component {
             // threadOpts={{}}
             // spaceOpts={{}}
             // useHovers={true}
-            // currentUser3BoxProfile={myProfile}
             // userProfileURL={address => `https://userprofiles.co/user/${address}`}
             />
           </div>

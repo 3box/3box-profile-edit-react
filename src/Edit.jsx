@@ -15,6 +15,10 @@ import {
 import Private from './assets/Private.svg';
 import Verified from './assets/Verified.svg';
 import Loading from './assets/Loading.svg';
+import TwitterIcon from './assets/TwitterIcon.svg';
+import GithubIcon from './assets/GithubIcon.svg';
+import EmailIcon from './assets/EmailIcon.svg';
+import InfoIcon from './assets/InfoIcon.svg';
 import DefaultColorPic from './assets/DefaultColorPic.svg';
 import './styles';
 
@@ -51,7 +55,7 @@ class EditProfile extends Component {
     });
   }
 
-  componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps) {
     const {
       currentUser3BoxProfile: {
         name,
@@ -63,7 +67,8 @@ class EditProfile extends Component {
         emoji,
         image,
         coverPhoto
-      }
+      },
+      box,
     } = this.props;
 
     if (name !== prevProps.currentUser3BoxProfile.name) this.setState({ name });
@@ -75,6 +80,39 @@ class EditProfile extends Component {
     if (verifiedGithub !== prevProps.currentUser3BoxProfile.verifiedGithub) this.setState({ verifiedGithub });
     if (verifiedTwitter !== prevProps.currentUser3BoxProfile.verifiedTwitter) this.setState({ verifiedTwitter });
     if (verifiedEmail !== prevProps.currentUser3BoxProfile.verifiedEmail) this.setState({ verifiedEmail });
+
+    if (box !== prevProps.box) this.fetchVerifiedFields();
+  }
+
+  fetchVerifiedFields = async () => {
+    const { box } = this.props;
+
+    let verifiedTwitter;
+    let verifiedGithub;
+    let verifiedEmail;
+
+    try {
+      verifiedTwitter = await box.verified.twitter();
+    } catch (error) {
+      console.log(error);
+    }
+
+    try {
+      verifiedGithub = await box.verified.github();
+    } catch (error) {
+      console.log(error);
+    }
+    try {
+      verifiedEmail = await box.verified.email();
+    } catch (error) {
+      console.log(error);
+    }
+
+    this.setState({
+      verifiedTwitter: verifiedTwitter && verifiedTwitter.username,
+      verifiedGithub: verifiedGithub && verifiedGithub.username,
+      verifiedEmail: verifiedEmail && verifiedEmail.email_address,
+    });
   }
 
   handleFormChange = (e, property) => {
@@ -235,6 +273,9 @@ class EditProfile extends Component {
       showEmoji,
       image,
       coverPhoto,
+      verifiedTwitter,
+      verifiedGithub,
+      verifiedEmail,
     } = this.state;
 
     return (
@@ -265,7 +306,7 @@ class EditProfile extends Component {
         <div className="edit">
           <div className="edit_form">
 
-            <div className="edit_profile">
+            <div className="edit_profile_section">
               <div className="edit_profile_canvas">
                 <div className="edit_profile_editCanvas_wrapper">
                   <button
@@ -277,8 +318,10 @@ class EditProfile extends Component {
                   >
                     &#10005;
                   </button>
+                </div>
 
-                  <label htmlFor="coverInput" className="chooseCanvas">
+                <div className="coverWrapper">
+                  <label htmlFor="coverInput" className="edit_profile_canvas_overlay">
                     <input
                       id="coverInput"
                       type="file"
@@ -288,26 +331,26 @@ class EditProfile extends Component {
                       onChange={e => this.handleUpdatePic(e.target.files[0], e, true)}
                       ref={ref => this.coverUpload = ref}
                     />
-                    <div className="edit_profile_editCanvas_button">
-                      Edit
-                    </div>
+                    <p>Change picture</p>
                   </label>
-                </div>
 
-                {(((coverPhoto && coverPhoto.length > 0 && coverPhoto[0].contentUrl) || (this.coverUpload && this.coverUpload.files && this.coverUpload.files[0])) && !removeCoverPic)
-                  && (
-                    <img
-                      className="coverPic"
-                      alt="profile"
-                      src={(this.coverUpload && this.coverUpload.files && this.coverUpload.files[0])
-                        ? URL.createObjectURL(this.coverUpload.files[0])
-                        : `https://ipfs.infura.io/ipfs/${coverPhoto[0].contentUrl['/']}`}
-                    />
-                  )}
+                  {(((coverPhoto && coverPhoto.length > 0 && coverPhoto[0].contentUrl) || (this.coverUpload && this.coverUpload.files && this.coverUpload.files[0])) && !removeCoverPic)
+                    ? (
+                      <img
+                        className="coverPic"
+                        alt="profile"
+                        src={(this.coverUpload && this.coverUpload.files && this.coverUpload.files[0])
+                          ? URL.createObjectURL(this.coverUpload.files[0])
+                          : `https://ipfs.infura.io/ipfs/${coverPhoto[0].contentUrl['/']}`}
+                      />
+                    ) : (
+                      <div className="coverPic" />
+                    )}
+                </div>
               </div>
             </div>
 
-            <div className="edit_profile">
+            <div className="edit_profile_section">
               <div className="edit_profile_picAndAddress">
                 <div className="edit_userPicture">
                   <label htmlFor="fileInput" className="chooseFile">
@@ -320,10 +363,6 @@ class EditProfile extends Component {
                       onChange={e => this.handleUpdatePic(e.target.files[0], e)}
                       ref={ref => this.fileUpload = ref}
                     />
-
-                    <button className="addImage">
-                      &#10005;
-                    </button>
 
                     <button
                       className="removeButton removePic"
@@ -348,8 +387,8 @@ class EditProfile extends Component {
                               : `https://ipfs.infura.io/ipfs/${image[0].contentUrl['/']}`}
                             alt="profile"
                           />
-                        </div>)
-                      : (
+                        </div>
+                      ) : (
                         <div className="profPic_div">
                           <div className="profPic_div_overlay">
                             <p>Change picture</p>
@@ -363,15 +402,20 @@ class EditProfile extends Component {
                           ) : <div className="profPic" />}
                         </div>
                       )}
-
                   </label>
 
                 </div>
 
+                <div className="edit_profile_switch">
+                  <div className="edit_profile_switch_pic" />
+                  {/* <img src="" className="" alt=""/> */}
+                  <p className="edit_profile_switch_text">SWITCH PROFILE</p>
+                </div>
               </div>
+
             </div>
 
-            <div className="edit_profile">
+            <div className="edit_profile_section">
 
               <div className="edit_profile_info">
                 <div className="edit_profile_fields">
@@ -441,6 +485,54 @@ class EditProfile extends Component {
                       </div>
                     </div>
 
+                    <div className="edit_profile_verifiedFields">
+                      {verifiedTwitter && (
+                        <div className="edit_profile_verifiedFields_fields">
+                          <SVG src={TwitterIcon} className="edit_profile_verifiedFields_icons" alt="Verified Twitter" />
+                          <p>
+                            {verifiedTwitter}
+                          </p>
+                        </div>
+                      )}
+
+                      {verifiedGithub && (
+                        <div className="edit_profile_verifiedFields_fields">
+                          <SVG src={GithubIcon} className="edit_profile_verifiedFields_icons" alt="Verified Github" />
+                          <p>
+                            {verifiedGithub}
+                          </p>
+                        </div>
+                      )}
+
+                      {verifiedEmail && (
+                        <div className="edit_profile_verifiedFields_fields">
+                          <SVG src={EmailIcon} className="edit_profile_verifiedFields_icons email" alt="Verified Email" />
+                          <p>
+                            {verifiedEmail}
+                          </p>
+                        </div>
+                      )}
+
+                      {(verifiedTwitter || verifiedGithub || verifiedEmail) && (
+                        <div className="edit_profile_verifiedFields_info infoIcon">
+                          <SVG src={InfoIcon} className="edit_profile_verifiedFields_icons" alt="Info" />
+                          <div className="edit_profile_verifiedFields_hover">
+                            <span className="edit_profile_verifiedFields_info_text">
+                              Add or edit verified fields and other fields at
+                              <a
+                                href={`https://3box.io/${currentUserAddr}/edit`}
+                                className="edit_profile_verifiedFields_info_text_link"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                3Box.io
+                              </a>
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
                     <div className="edit_profile_fields_entry">
                       <div className="edit_profile_keyContainer">
                         <p className="edit_profile_key">DESCRIPTION</p>
@@ -463,6 +555,7 @@ class EditProfile extends Component {
                 <button
                   type="submit"
                   disabled={disableSave}
+                  className="edit_formControls_content_save"
                   onClick={
                     (e) => {
                       this.setState({ disableSave: true }, () => this.handleSubmit(e));
@@ -545,7 +638,7 @@ EditProfile.defaultProps = {
 };
 
 export default EditProfile
-// ,
+      // ,
 //   {
 //     getMyProfileValue,
 //     getMyDID,

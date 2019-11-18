@@ -406,6 +406,17 @@
   }
 }
 
+.edit_profile_keyContainer.currentAddress {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 13px 0;
+
+  .edit_profile_keyContainer_currentAddress {
+    margin: 0 6px 0 0;
+  }
+}
+
 .currentAddress {
   margin-bottom: 0;
 }

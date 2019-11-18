@@ -4,9 +4,6 @@ import makeBlockie from 'ethereum-blockies-base64';
 import { Picker } from 'emoji-mart';
 import SVG from 'react-inlinesvg';
 
-import TwitterIcon from '../assets/TwitterIcon.svg';
-import GithubIcon from '../assets/GithubIcon.svg';
-import EmailIcon from '../assets/EmailIcon.svg';
 import InfoIcon from '../assets/InfoIcon.svg';
 
 class GeneralProfile extends Component {
@@ -17,8 +14,9 @@ class GeneralProfile extends Component {
 
   render() {
     const {
-      coverPhoto,
+      spaceProfileCoverPhoto,
       image,
+      spaceProfileImage,
       currentUserAddr,
       emoji,
       description,
@@ -46,8 +44,8 @@ class GeneralProfile extends Component {
               <div className="edit_profile_editCanvas_wrapper">
                 <button
                   className="removeCoverPic removeButton"
-                  onClick={() => handleRemovePicture('SpaceCover')}
-                  disabled={(coverPhoto && coverPhoto.length > 0 || (this.coverUpload && this.coverUpload.files && this.coverUpload.files[0])) ? false : true}
+                  onClick={() => handleRemovePicture('spaceProfileCoverPhoto', true)}
+                  disabled={(spaceProfileCoverPhoto && spaceProfileCoverPhoto.length > 0 || (this.coverUpload && this.coverUpload.files && this.coverUpload.files[0])) ? false : true}
                   text="remove"
                   type="button"
                 >
@@ -63,20 +61,20 @@ class GeneralProfile extends Component {
                     name="coverPic"
                     className="light coverInput"
                     accept="image/*"
-                    onChange={e => handleUpdatePic(e.target.files[0], e, true)}
+                    onChange={e => handleUpdatePic(e.target.files[0], e, 'spaceProfileCoverPhoto')}
                     ref={ref => this.coverUpload = ref}
                   />
                   <p>Change picture</p>
                 </label>
 
-                {(((coverPhoto && coverPhoto.length > 0 && coverPhoto[0].contentUrl) || (this.coverUpload && this.coverUpload.files && this.coverUpload.files[0])) && !shouldRemoveCoverPic)
+                {(((spaceProfileCoverPhoto && spaceProfileCoverPhoto.length > 0 && spaceProfileCoverPhoto[0].contentUrl) || (this.coverUpload && this.coverUpload.files && this.coverUpload.files[0])) && !shouldRemoveCoverPic)
                   ? (
                     <img
                       className="coverPic"
                       alt="profile"
                       src={(this.coverUpload && this.coverUpload.files && this.coverUpload.files[0])
                         ? URL.createObjectURL(this.coverUpload.files[0])
-                        : `https://ipfs.infura.io/ipfs/${coverPhoto[0].contentUrl['/']}`}
+                        : `https://ipfs.infura.io/ipfs/${spaceProfileCoverPhoto[0].contentUrl['/']}`}
                     />
                   ) : (
                     <div className="coverPic" />
@@ -95,21 +93,21 @@ class GeneralProfile extends Component {
                     name="pic"
                     className="light fileInput"
                     accept="image/*"
-                    onChange={e => handleUpdatePic(e.target.files[0], e)}
+                    onChange={e => handleUpdatePic(e.target.files[0], e, 'spaceProfileImage')}
                     ref={ref => this.fileUpload = ref}
                   />
 
                   <button
                     className="removeButton removePic"
-                    onClick={() => handleRemovePicture('User')}
-                    disabled={((image && image.length > 0 && image[0].contentUrl) || (this.fileUpload && this.fileUpload.files && this.fileUpload.files[0])) ? false : true}
+                    onClick={() => handleRemovePicture('spaceProfileImage', true)}
+                    disabled={((spaceProfileImage && spaceProfileImage.length > 0 && spaceProfileImage[0].contentUrl) || (this.fileUpload && this.fileUpload.files && this.fileUpload.files[0])) ? false : true}
                     text="remove"
                     type="button"
                   >
                     &#10005;
                   </button>
 
-                  {(((image && image.length > 0 && image[0].contentUrl) || (this.fileUpload && this.fileUpload.files && this.fileUpload.files[0])) && !shouldRemoveUserPic)
+                  {(((spaceProfileImage && spaceProfileImage.length > 0 && spaceProfileImage[0].contentUrl) || (this.fileUpload && this.fileUpload.files && this.fileUpload.files[0])) && !shouldRemoveUserPic)
                     ? (
                       <div className="profPic_div">
                         <div className="profPic_div_overlay">
@@ -119,7 +117,7 @@ class GeneralProfile extends Component {
                           className="profPic clearProfPic"
                           src={(this.fileUpload && this.fileUpload.files && this.fileUpload.files[0])
                             ? URL.createObjectURL(this.fileUpload.files[0])
-                            : `https://ipfs.infura.io/ipfs/${image[0].contentUrl['/']}`}
+                            : `https://ipfs.infura.io/ipfs/${spaceProfileImage[0].contentUrl['/']}`}
                           alt="profile"
                         />
                       </div>
@@ -145,8 +143,8 @@ class GeneralProfile extends Component {
                 className="edit_profile_switch"
                 onClick={handleSwitchProfile}
               >
-                <div className="edit_profile_switch_pic" />
-                {/* <img src="" className="" alt=""/> */}
+                {!!image.length ? <img src={`https://ipfs.infura.io/ipfs/${image[0].contentUrl['/']}`} className="edit_profile_switch_pic" alt="Other profile" />
+                  : <div className="edit_profile_switch_pic" />}
                 <p className="edit_profile_switch_text">SWITCH PROFILE</p>
               </div>
             </div>
@@ -162,7 +160,18 @@ class GeneralProfile extends Component {
                   <div className="edit_profile_fields_entry noMargin">
                     <div className="edit_profile_fields_entry_name">
                       <div className="edit_profile_keyContainer currentAddress">
-                        <p>SPACE PROFILE</p>
+                        <p className="edit_profile_keyContainer_currentAddress">
+                          SPACE PROFILE
+                        </p>
+
+                        <div className="edit_profile_verifiedFields_info infoIcon">
+                          <SVG src={InfoIcon} className="edit_profile_verifiedFields_icons" alt="Info" />
+                          <div className="edit_profile_verifiedFields_hover">
+                            <span className="edit_profile_verifiedFields_info_text">
+                              Data here is saved to the space this current dApp has access to
+                            </span>
+                          </div>
+                        </div>
                       </div>
                       <p title={currentUserAddr} className="edit_profile_address">
                         {currentUserAddr}
@@ -290,7 +299,8 @@ GeneralProfile.propTypes = {
   email: PropTypes.string,
   currentUserAddr: PropTypes.string,
   image: PropTypes.array,
-  coverPhoto: PropTypes.array,
+  spaceProfileImage: PropTypes.array,
+  spaceProfileCoverPhoto: PropTypes.array,
   isFetchingThreeBox: PropTypes.bool,
   copySuccessful: PropTypes.bool,
   isShowEmoji: PropTypes.bool,
@@ -322,7 +332,8 @@ GeneralProfile.defaultProps = {
   email: '',
   currentUserAddr: '',
   image: [],
-  coverPhoto: [],
+  spaceProfileImage: [],
+  spaceProfileCoverPhoto: [],
   isFetchingThreeBox: false,
   copySuccessful: false,
 };

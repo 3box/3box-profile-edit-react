@@ -33,10 +33,12 @@ class GeneralProfile extends Component {
       handleUpdatePic,
       handleAddEmoji,
       handleFormChange,
-      shouldRemoveCoverPic,
-      shouldRemoveUserPic,
+      shouldRemoveCoverPhoto,
+      shouldRemoveImage,
       handleSwitchProfile,
       handleShowEmojiPicker,
+      spaceProfileImage,
+      handleSubmit,
     } = this.props;
 
     return (
@@ -48,7 +50,7 @@ class GeneralProfile extends Component {
               <div className="edit_profile_editCanvas_wrapper">
                 <button
                   className="removeCoverPic removeButton"
-                  onClick={() => handleRemovePicture('Cover')}
+                  onClick={() => handleRemovePicture('coverPhoto')}
                   disabled={(coverPhoto && coverPhoto.length > 0 || (this.coverUpload && this.coverUpload.files && this.coverUpload.files[0])) ? false : true}
                   text="remove"
                   type="button"
@@ -65,18 +67,18 @@ class GeneralProfile extends Component {
                     name="coverPic"
                     className="light coverInput"
                     accept="image/*"
-                    onChange={e => handleUpdatePic(e.target.files[0], e, true)}
+                    onChange={e => handleUpdatePic(e.target.files[0], e, 'coverPhoto')}
                     ref={ref => this.coverUpload = ref}
                   />
                   <p>Change picture</p>
                 </label>
 
-                {(((coverPhoto && coverPhoto.length > 0 && coverPhoto[0].contentUrl) || (this.coverUpload && this.coverUpload.files && this.coverUpload.files[0])) && !shouldRemoveCoverPic)
+                {((!!coverPhoto.length || (this.coverUpload && !!this.coverUpload.length)) && !shouldRemoveCoverPhoto)
                   ? (
                     <img
                       className="coverPic"
                       alt="profile"
-                      src={(this.coverUpload && this.coverUpload.files && this.coverUpload.files[0])
+                      src={(this.coverUpload && !!this.coverUpload.length)
                         ? URL.createObjectURL(this.coverUpload.files[0])
                         : `https://ipfs.infura.io/ipfs/${coverPhoto[0].contentUrl['/']}`}
                     />
@@ -97,13 +99,13 @@ class GeneralProfile extends Component {
                     name="pic"
                     className="light fileInput"
                     accept="image/*"
-                    onChange={e => handleUpdatePic(e.target.files[0], e)}
+                    onChange={e => handleUpdatePic(e.target.files[0], e, 'image')}
                     ref={ref => this.fileUpload = ref}
                   />
 
                   <button
                     className="removeButton removePic"
-                    onClick={() => handleRemovePicture('User')}
+                    onClick={() => handleRemovePicture('image')}
                     disabled={((image && image.length > 0 && image[0].contentUrl) || (this.fileUpload && this.fileUpload.files && this.fileUpload.files[0])) ? false : true}
                     text="remove"
                     type="button"
@@ -111,7 +113,7 @@ class GeneralProfile extends Component {
                     &#10005;
                   </button>
 
-                  {(((image && image.length > 0 && image[0].contentUrl) || (this.fileUpload && this.fileUpload.files && this.fileUpload.files[0])) && !shouldRemoveUserPic)
+                  {(((image && image.length > 0 && image[0].contentUrl) || (this.fileUpload && this.fileUpload.files && this.fileUpload.files[0])) && !shouldRemoveImage)
                     ? (
                       <div className="profPic_div">
                         <div className="profPic_div_overlay">
@@ -147,8 +149,8 @@ class GeneralProfile extends Component {
                 className="edit_profile_switch"
                 onClick={handleSwitchProfile}
               >
-                <div className="edit_profile_switch_pic" />
-                {/* <img src="" className="" alt=""/> */}
+                {spaceProfileImage ? <img src={`https://ipfs.infura.io/ipfs/${spaceProfileImage[0].contentUrl['/']}`} className="edit_profile_switch_pic" alt="Other profile" />
+                  : <div className="edit_profile_switch_pic" />}
                 <p className="edit_profile_switch_text">SWITCH PROFILE</p>
               </div>
             </div>
@@ -167,6 +169,15 @@ class GeneralProfile extends Component {
                         <p className="edit_profile_keyContainer_currentAddress">
                           GENERAL PROFILE
                         </p>
+
+                        <div className="edit_profile_verifiedFields_info infoIcon">
+                          <SVG src={InfoIcon} className="edit_profile_verifiedFields_icons" alt="Info" />
+                          <div className="edit_profile_verifiedFields_hover">
+                            <span className="edit_profile_verifiedFields_info_text">
+                              Data here is accessible to all dApps using your general 3Box profile
+                            </span>
+                          </div>
+                        </div>
                       </div>
                       <p title={currentUserAddr} className="edit_profile_address">
                         {currentUserAddr}
@@ -265,7 +276,7 @@ class GeneralProfile extends Component {
                         <SVG src={InfoIcon} className="edit_profile_verifiedFields_icons" alt="Info" />
                         <div className="edit_profile_verifiedFields_hover">
                           <span className="edit_profile_verifiedFields_info_text">
-                            Add or edit verified fields and other fields at
+                            Add or edit verified fields at
                               <a
                               href={`https://3box.io/${currentUserAddr}/edit`}
                               className="edit_profile_verifiedFields_info_text_link"
@@ -305,7 +316,7 @@ class GeneralProfile extends Component {
                 className="edit_formControls_content_save"
                 onClick={
                   (e) => {
-                    this.setState({ isSaveDisabled: true }, () => this.handleSubmit(e));
+                    this.setState({ isSaveDisabled: true }, () => handleSubmit(e));
                   }}
               >
                 Save
@@ -343,19 +354,22 @@ GeneralProfile.propTypes = {
   email: PropTypes.string,
   currentUserAddr: PropTypes.string,
   image: PropTypes.array,
+  spaceProfileImage: PropTypes.array,
   coverPhoto: PropTypes.array,
   isFetchingThreeBox: PropTypes.bool,
   copySuccessful: PropTypes.bool,
   isShowEmoji: PropTypes.bool,
   isSaveDisabled: PropTypes.bool,
-  shouldRemoveCoverPic: PropTypes.bool,
-  shouldRemoveUserPic: PropTypes.bool,
+  shouldRemoveCoverPhoto: PropTypes.bool,
+  shouldRemoveImage: PropTypes.bool,
   cancelFunc: PropTypes.func,
   handleRemovePicture: PropTypes.func.isRequired,
   handleUpdatePic: PropTypes.func.isRequired,
   handleAddEmoji: PropTypes.func.isRequired,
   handleFormChange: PropTypes.func.isRequired,
   handleSwitchProfile: PropTypes.func.isRequired,
+  handleShowEmojiPicker: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
 };
 
 GeneralProfile.defaultProps = {

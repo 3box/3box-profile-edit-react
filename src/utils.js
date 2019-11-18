@@ -45,3 +45,8 @@ export const editProfileFields = [
   ['image', 'public'],
   ['coverPhoto', 'public'],
 ];
+
+export const capitalizeFirstLetter = (string) => {
+  const capitalized = string.charAt(0).toUpperCase() + string.substring(1);
+  return capitalized;
+}

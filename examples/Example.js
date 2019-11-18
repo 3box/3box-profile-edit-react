@@ -9,6 +9,8 @@ import Logo from '../src/assets/3BoxLogoWhite.svg';
 
 import './index.scss';
 
+const spaceName = '3boxtestcomments';
+
 class Example extends React.Component {
   constructor(props) {
     super(props);
@@ -30,10 +32,11 @@ class Example extends React.Component {
 
     const box = await Box.openBox(myAddress, window.ethereum, {});
     const myProfile = await Box.getProfile(myAddress);
+    const space = await box.openSpace(spaceName);
     console.log('myProfile', myProfile);
 
-    box.onSyncDone(() => this.setState({ box }));
-    this.setState({ box, myProfile, myAddress, isReady: true });
+    box.onSyncDone(() => console.log('syncdone'));
+    this.setState({ box, myProfile, myAddress, space });
   }
 
   render() {
@@ -41,9 +44,8 @@ class Example extends React.Component {
       box,
       myAddress,
       myProfile,
-      isReady
+      space
     } = this.state;
-
     return (
       <div className="App">
         <div className="example_page">
@@ -52,38 +54,42 @@ class Example extends React.Component {
             <h2>Edit Profile component<br /> Demo</h2>
           </div>
           <div className="userscontainer">
-            <Edit
-              appName="Rarity"
-              appImage='https://i.imgur.com/RXJO8FD.png'
-              spaceName='3box_test'
-              currentUserAddr={myAddress}
-              
-              
-              currentUser3BoxProfile={myProfile}
+            {box && (
+              <Edit
+                appName="Rarity"
+                appImage='https://i.imgur.com/RXJO8FD.png'
+                // spaceName={spaceName}
+                space={space}
+                currentUserAddr={myAddress}
 
-              // required
-              threadName='ghostChatTest'
+                // cancelFunc
 
-              // case A & B
-              box={box}
+                currentUser3BoxProfile={myProfile}
 
-              // case B
-              // loginFunction={this.handleLogin}
+                // required
+                threadName='ghostChatTest'
 
-              // case C
-              ethereum={window.ethereum}
+                // case A & B
+                box={box}
 
-              popupChat
-            // mute
-            // colorTheme="#1168df"
+                // case B
+                // loginFunction={this.handleLogin}
 
-            // optional
-            // colorTheme="#1168df"
-            // threadOpts={{}}
-            // spaceOpts={{}}
-            // useHovers={true}
-            // userProfileURL={address => `https://userprofiles.co/user/${address}`}
-            />
+                // case C
+                ethereum={window.ethereum}
+
+                popupChat
+              // mute
+              // colorTheme="#1168df"
+
+              // optional
+              // colorTheme="#1168df"
+              // threadOpts={{}}
+              // spaceOpts={{}}
+              // useHovers={true}
+              // userProfileURL={address => `https://userprofiles.co/user/${address}`}
+              />
+            )}
           </div>
         </div>
       </div>

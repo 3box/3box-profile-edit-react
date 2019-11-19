@@ -29,8 +29,11 @@ class Example extends React.Component {
   handleLogin = async () => {
     const addresses = await window.ethereum.enable();
     const myAddress = addresses[0];
-
+    console.log('start');
+    console.log('myAddress', myAddress);
+    console.log('window.ethereum', window.ethereum);
     const box = await Box.openBox(myAddress, window.ethereum, {});
+    console.log('boxopened');
     const myProfile = await Box.getProfile(myAddress);
     const space = await box.openSpace(spaceName);
     console.log('myProfile', myProfile);

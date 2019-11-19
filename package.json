@@ -69,6 +69,7 @@
     "3box": "^1.13.2",
     "3id-resolver": "0.0.6",
     "@babel/runtime": "^7.6.0",
+    "async": "^3.1.0",
     "babel-core": "^7.0.0-bridge.0",
     "emoji-js": "^3.4.1",
     "emoji-mart": "^2.11.1",

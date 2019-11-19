@@ -64,7 +64,7 @@ class EditProfile extends Component {
   }
 
   async componentDidMount() {
-    const { currentUser3BoxProfile, space, currentUserAddr } = this.props;
+    const { currentUser3BoxProfile, space, currentUserAddr, additionalFields } = this.props;
 
     const isSpaceProfileDefault = await space.public.get('isSpaceProfileDefault');
     this.setState({ isSpaceProfileDefault });
@@ -80,6 +80,13 @@ class EditProfile extends Component {
       if (generalValue) this.setState({ [fieldSet[0]]: generalValue });
       if (spaceValue) this.setState({ [`spaceProfile${capitalizeFirstLetter(fieldSet[0])}`]: spaceValue });
     });
+
+    if (additionalFields.length) {
+      additionalFields.forEach((field) => {
+        const spaceValue = spaceProfile[field.key];
+        if (spaceValue) this.setState({ [field.key]: spaceValue });
+      });
+    }
 
     this.fetchVerifiedFields();
     this.setState({ originalProfile: generalProfile, originalSpaceProfile: spaceProfile })
@@ -294,7 +301,7 @@ class EditProfile extends Component {
       spaceImageBuffer,
       isSpacePicEdited,
       shouldRemoveSpaceProfileCoverPhoto,
-      shouldRemoveSpaceProfileImage
+      shouldRemoveSpaceProfileImage,
     } = this.state;
 
     const {
@@ -366,8 +373,8 @@ class EditProfile extends Component {
     if (shouldRemoveSpaceProfileImage) await space.public.remove('image');
     if (shouldRemoveSpaceProfileCoverPhoto) await space.public.remove('coverPhoto');
 
-    await saveCustomFields(space, additionalFields, this.state);
-    console.log('FINISHED');
+    await saveCustomFields(space, additionalFields, this.state, originalSpaceProfile);
+
     this.setState({ isSaveLoading: false });
     // add function here to reroute after saving
     // history.push(`/${currentUserAddr}/${routes.ACTIVITY}`);

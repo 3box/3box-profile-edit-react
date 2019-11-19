@@ -4,6 +4,7 @@ import makeBlockie from 'ethereum-blockies-base64';
 import { Picker } from 'emoji-mart';
 import SVG from 'react-inlinesvg';
 
+import ProfileField from './ProfileField';
 import InfoIcon from '../assets/InfoIcon.svg';
 
 class GeneralProfile extends Component {
@@ -28,11 +29,12 @@ class GeneralProfile extends Component {
       handleUpdatePic,
       handleAddEmoji,
       handleFormChange,
-      shouldRemoveCoverPic,
+      shouldRemoveSpaceProfileImage,
       shouldRemoveUserPic,
       handleSwitchProfile,
       handleShowEmojiPicker,
       handleSubmit,
+      additionalFields,
     } = this.props;
 
     return (
@@ -67,12 +69,12 @@ class GeneralProfile extends Component {
                   <p>Change picture</p>
                 </label>
 
-                {(((spaceProfileCoverPhoto && spaceProfileCoverPhoto.length > 0 && spaceProfileCoverPhoto[0].contentUrl) || (this.coverUpload && this.coverUpload.files && this.coverUpload.files[0])) && !shouldRemoveCoverPic)
+                {((!!spaceProfileCoverPhoto.length || (this.coverUpload && !!this.coverUpload.files.length)) && !shouldRemoveSpaceProfileImage)
                   ? (
                     <img
                       className="coverPic"
                       alt="profile"
-                      src={(this.coverUpload && this.coverUpload.files && this.coverUpload.files[0])
+                      src={(this.coverUpload && !!this.coverUpload.files.length)
                         ? URL.createObjectURL(this.coverUpload.files[0])
                         : `https://ipfs.infura.io/ipfs/${spaceProfileCoverPhoto[0].contentUrl['/']}`}
                     />
@@ -152,107 +154,118 @@ class GeneralProfile extends Component {
           </div>
 
           <div className="edit_profile_section">
-
             <div className="edit_profile_info">
-              <div className="edit_profile_fields">
-                <div className="edit_info">
 
-                  <div className="edit_profile_fields_entry noMargin">
-                    <div className="edit_profile_fields_entry_name">
-                      <div className="edit_profile_keyContainer currentAddress">
-                        <p className="edit_profile_keyContainer_currentAddress">
-                          SPACE PROFILE
+              <div className="edit_profile_fields_entry noMargin">
+                <div className="edit_profile_fields_entry_name">
+                  <div className="edit_profile_keyContainer currentAddress">
+                    <p className="edit_profile_keyContainer_currentAddress">
+                      SPACE PROFILE
                         </p>
 
-                        <div className="edit_profile_verifiedFields_info infoIcon">
-                          <SVG src={InfoIcon} className="edit_profile_verifiedFields_icons" alt="Info" />
-                          <div className="edit_profile_verifiedFields_hover">
-                            <span className="edit_profile_verifiedFields_info_text">
-                              Data here is saved to the space this current dApp has access to
+                    <div className="edit_profile_verifiedFields_info infoIcon">
+                      <SVG src={InfoIcon} className="edit_profile_verifiedFields_icons" alt="Info" />
+                      <div className="edit_profile_verifiedFields_hover">
+                        <span className="edit_profile_verifiedFields_info_text">
+                          Data here is saved to the space this current dApp has access to
                             </span>
-                          </div>
-                        </div>
                       </div>
-                      <p title={currentUserAddr} className="edit_profile_address">
-                        {currentUserAddr}
-                      </p>
                     </div>
                   </div>
+                  <p title={currentUserAddr} className="edit_profile_address">
+                    {currentUserAddr}
+                  </p>
+                </div>
+              </div>
 
-                  <div className="edit_profile_fields_entry nameAndEmoji">
-                    <div className="edit_profile_fields_entry_name">
-                      <div className="edit_profile_keyContainer">
-                        <p>NAME</p>
-                      </div>
-                      <input
-                        name="name"
-                        type="text"
-                        value={name}
-                        className="edit_profile_value nameField"
-                        onChange={e => handleFormChange(e, 'spaceProfileName')}
-                      />
-                    </div>
+              <div className="edit_profile_fields_entry nameAndEmoji">
+                <div className="edit_profile_fields_entry_name">
+                  <div className="edit_profile_keyContainer">
+                    <p>NAME</p>
+                  </div>
+                  <input
+                    name="name"
+                    type="text"
+                    value={name}
+                    className="edit_profile_value nameField"
+                    onChange={e => handleFormChange(e, 'spaceProfileName')}
+                  />
+                </div>
 
-                    <div className="edit_profile_fields_entry_emoji">
-                      <div className="edit_profile_keyContainer">
-                        <p className="edit_profile_key">EMOJI</p>
-                      </div>
+                <div className="edit_profile_fields_entry_emoji">
+                  <div className="edit_profile_keyContainer">
+                    <p className="edit_profile_key">EMOJI</p>
+                  </div>
 
-                      {isShowEmoji
-                        && (
-                          <div
-                            className="edit_profile_value_emojiMenu"
-                          >
-                            <Picker
-                              onSelect={selectedEmoji => handleAddEmoji(selectedEmoji, true)}
-                              title="Pick your spirit emoji"
-                            />
-                          </div>)
-                      }
-
-                      {isShowEmoji
-                        && <div className='onClickOutside' onClick={handleShowEmojiPicker} />}
-
+                  {isShowEmoji
+                    && (
                       <div
-                        className="edit_profile_value--spirit"
-                        onClick={handleShowEmojiPicker}
+                        className="edit_profile_value_emojiMenu"
                       >
-                        {
-                          emoji
-                            ? (
-                              <span className="edit_profile_value--spirit_character" role="img">
-                                {emoji.code ? emoji.code : emoji}
-                              </span>
-                            )
-                            : (
-                              <span className="edit_profile_value--spirit_character" role="img" aria-label="unicorn">
-                                🦄
-                              </span>
-                            )
-                        }
-                      </div>
-                    </div>
-                  </div>
+                        <Picker
+                          onSelect={selectedEmoji => handleAddEmoji(selectedEmoji, true)}
+                          title="Pick your spirit emoji"
+                        />
+                      </div>)
+                  }
 
-                  <div className="edit_profile_verifiedFields" />
+                  {isShowEmoji
+                    && <div className='onClickOutside' onClick={handleShowEmojiPicker} />}
 
-                  <div className="edit_profile_fields_entry">
-                    <div className="edit_profile_keyContainer">
-                      <p className="edit_profile_key">DESCRIPTION</p>
-                    </div>
-                    <textarea
-                      name="description"
-                      type="text"
-                      className="edit_profile_value--description"
-                      value={description}
-                      onChange={e => handleFormChange(e, 'spaceProfileDescription')}
-                    />
+                  <div
+                    className="edit_profile_value--spirit"
+                    onClick={handleShowEmojiPicker}
+                  >
+                    {
+                      emoji
+                        ? (
+                          <span className="edit_profile_value--spirit_character" role="img">
+                            {emoji.code ? emoji.code : emoji}
+                          </span>
+                        )
+                        : (
+                          <span className="edit_profile_value--spirit_character" role="img" aria-label="unicorn">
+                            🦄
+                              </span>
+                        )
+                    }
                   </div>
                 </div>
               </div>
-            </div>
 
+              <div className="edit_profile_verifiedFields" />
+
+              <div className="edit_profile_fields_entry">
+                <div className="edit_profile_keyContainer">
+                  <p className="edit_profile_key">DESCRIPTION</p>
+                </div>
+                <textarea
+                  name="description"
+                  type="text"
+                  className="edit_profile_value--description"
+                  value={description}
+                  onChange={e => handleFormChange(e, 'spaceProfileDescription')}
+                />
+              </div>
+
+            </div>
           </div>
+
+          {!!additionalFields.length && (
+            <div className="edit_profile_section">
+              <div className="edit_profile_info">
+                {additionalFields.map(entry => (
+                  <ProfileField
+                    customField={entry}
+                    handleFormChange={handleFormChange}
+                    key={entry.key}
+                    {...this.props}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="edit_formControls">
             <div className="edit_formControls_content">
               <button
@@ -287,13 +300,12 @@ GeneralProfile.propTypes = {
   box: PropTypes.object,
   allData: PropTypes.object,
   currentUser3BoxProfile: PropTypes.object,
-  list: PropTypes.array,
+  additionalFields: PropTypes.array,
   name: PropTypes.string,
   spaceName: PropTypes.string,
   verifiedGithub: PropTypes.string,
   verifiedTwitter: PropTypes.string,
   verifiedEmail: PropTypes.string,
-  did: PropTypes.string,
   emoji: PropTypes.string,
   description: PropTypes.string,
   email: PropTypes.string,
@@ -305,7 +317,7 @@ GeneralProfile.propTypes = {
   copySuccessful: PropTypes.bool,
   isShowEmoji: PropTypes.bool,
   isSaveDisabled: PropTypes.bool,
-  shouldRemoveCoverPic: PropTypes.bool,
+  shouldRemoveSpaceProfileImage: PropTypes.bool,
   shouldRemoveUserPic: PropTypes.bool,
   cancelFunc: PropTypes.func,
   handleRemovePicture: PropTypes.func.isRequired,
@@ -321,7 +333,6 @@ GeneralProfile.defaultProps = {
   box: {},
   allData: {},
   currentUser3BoxProfile: {},
-  did: '',
   verifiedEmail: '',
   verifiedGithub: '',
   verifiedTwitter: '',
@@ -334,6 +345,7 @@ GeneralProfile.defaultProps = {
   image: [],
   spaceProfileImage: [],
   spaceProfileCoverPhoto: [],
+  additionalFields: [],
   isFetchingThreeBox: false,
   copySuccessful: false,
 };

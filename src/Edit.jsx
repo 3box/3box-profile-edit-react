@@ -5,7 +5,14 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import SVG from 'react-inlinesvg';
 import Box from '3box';
 
-import { copyToClipBoard, editProfileFields, capitalizeFirstLetter } from './utils';
+import {
+  // copyToClipBoard,
+  editProfileFields,
+  capitalizeFirstLetter,
+  formatIpfsImageObject,
+} from './utils';
+
+import { saveCustomFields } from './helpers';
 
 import {
   FileSizeModal,
@@ -152,7 +159,6 @@ class EditProfile extends Component {
   }
 
   handleFormChange = (e, property) => {
-    // this.setState({ [property]: e.target.value })
     const { editedArray } = this.state;
     const fieldState = this.state[property];
     const fieldProp = this.props[property];
@@ -234,16 +240,11 @@ class EditProfile extends Component {
     const profile = isSpace ? 'originalSpaceProfile' : 'originalProfile';
     const field = isSpace ? type === 'spaceProfileImage' ? 'image' : 'coverPhoto' : type;
 
-    console.log('profile', profile);
-    console.log('field', field);
-
     if (this.state[profile][field]) {
       if (updatedEditedArray.indexOf(type) === -1) updatedEditedArray.push(type);
     } else {
       updatedEditedArray.splice(updatedEditedArray.indexOf(type), 1);
     }
-
-    console.log('updatedEditedArray', updatedEditedArray);
 
     this.setState({
       [`shouldRemove${capitalizeFirstLetter(type)}`]: true,
@@ -298,7 +299,8 @@ class EditProfile extends Component {
 
     const {
       box,
-      space
+      space,
+      additionalFields
     } = this.props;
 
     e.preventDefault();
@@ -326,12 +328,19 @@ class EditProfile extends Component {
     // save profile picture
     const fetch = isPicEdited && await this.fetchPic(buffer);
     const returnedData = isPicEdited && await fetch.json();
-    if (isPicEdited) await box.public.set('image', [{ '@type': 'ImageObject', contentUrl: { '/': returnedData.Hash } }]);
+    if (isPicEdited) {
+      const imageObject = formatIpfsImageObject(returnedData);
+      await box.public.set('image', imageObject);
+      this.setState({ image: imageObject });
+    }
 
     const fetchCover = isCoverPicEdited && await this.fetchPic(coverBuffer);
     const returnedCoverData = isCoverPicEdited && await fetchCover.json();
-    if (isCoverPicEdited) await box.public.set('coverPhoto', [{ '@type': 'ImageObject', contentUrl: { '/': returnedCoverData.Hash } }]);
-
+    if (isCoverPicEdited) {
+      const imageObject = formatIpfsImageObject(returnedCoverData);
+      await box.public.set('coverPhoto', imageObject);
+      this.setState({ coverPhoto: imageObject });
+    }
 
     // space profile fields
     if (spaceNameChanged) await space.public[spaceProfileName !== '' ? 'set' : 'remove']('name', spaceProfileName);
@@ -340,15 +349,25 @@ class EditProfile extends Component {
 
     const fetchSpaceImage = isSpacePicEdited && await this.fetchPic(spaceImageBuffer);
     const returnedSpaceImageData = isSpacePicEdited && await fetchSpaceImage.json();
-    if (isSpacePicEdited) await space.public.set('image', [{ '@type': 'ImageObject', contentUrl: { '/': returnedSpaceImageData.Hash } }]);
+    if (isSpacePicEdited) {
+      const imageObject = formatIpfsImageObject(returnedSpaceImageData);
+      await space.public.set('image', imageObject);
+      this.setState({ spaceProfileImage: imageObject });
+    }
 
     const fetchSpaceCover = isSpaceCoverPicEdited && await this.fetchPic(spaceCoverBuffer);
     const returnedSpaceCoverData = isSpaceCoverPicEdited && await fetchSpaceCover.json();
-    if (isSpaceCoverPicEdited) await space.public.set('coverPhoto', [{ '@type': 'ImageObject', contentUrl: { '/': returnedSpaceCoverData.Hash } }]);
+    if (isSpaceCoverPicEdited) {
+      const imageObject = formatIpfsImageObject(returnedSpaceCoverData);
+      await space.public.set('coverPhoto', imageObject);
+      this.setState({ spaceProfileCoverPhoto: imageObject });
+    }
 
     if (shouldRemoveSpaceProfileImage) await space.public.remove('image');
     if (shouldRemoveSpaceProfileCoverPhoto) await space.public.remove('coverPhoto');
 
+    await saveCustomFields(space, additionalFields, this.state);
+    console.log('FINISHED');
     this.setState({ isSaveLoading: false });
     // add function here to reroute after saving
     // history.push(`/${currentUserAddr}/${routes.ACTIVITY}`);
@@ -358,6 +377,7 @@ class EditProfile extends Component {
     const {
       currentUserAddr,
       cancelFunc,
+      additionalFields,
     } = this.props;
 
     const {
@@ -375,7 +395,7 @@ class EditProfile extends Component {
       verifiedTwitter,
       verifiedGithub,
       verifiedEmail,
-      isSpaceProfileDefault,
+      // isSpaceProfileDefault,
       isShowGeneralProfile,
 
       spaceProfileName,
@@ -421,8 +441,6 @@ class EditProfile extends Component {
             image={image}
             emoji={emoji}
             name={name}
-
-            // spaceProfileImage={}
             shouldRemoveImage={shouldRemoveImage}
             shouldRemoveCoverPhoto={shouldRemoveCoverPhoto}
             description={description}
@@ -434,6 +452,8 @@ class EditProfile extends Component {
             isSaveDisabled={isSaveDisabled}
             cancelFunc={cancelFunc}
             spaceProfileImage={spaceProfileImage}
+            additionalFields={additionalFields}
+
             handleRemovePicture={this.handleRemovePicture}
             coverUpload={this.coverUpload}
             handleUpdatePic={this.handleUpdatePic}
@@ -443,13 +463,14 @@ class EditProfile extends Component {
             handleSwitchProfile={this.handleSwitchProfile}
             handleShowEmojiPicker={this.handleShowEmojiPicker}
             handleSubmit={this.handleSubmit}
+
+            {...this.state}
           />
         ) : (
             <SpaceProfile
               name={spaceProfileName}
               description={spaceProfileDescription}
               emoji={spaceProfileEmoji}
-
               spaceProfileCoverPhoto={spaceProfileCoverPhoto}
               spaceProfileImage={spaceProfileImage}
               shouldRemoveSpaceProfileCoverPhoto={shouldRemoveSpaceProfileCoverPhoto}
@@ -460,6 +481,7 @@ class EditProfile extends Component {
               isShowEmoji={isShowEmoji}
               isSaveDisabled={isSaveDisabled}
               cancelFunc={cancelFunc}
+              additionalFields={additionalFields}
               handleRemovePicture={this.handleRemovePicture}
               coverUpload={this.coverUpload}
               handleUpdatePic={this.handleUpdatePic}
@@ -469,6 +491,8 @@ class EditProfile extends Component {
               handleSwitchProfile={this.handleSwitchProfile}
               handleShowEmojiPicker={this.handleShowEmojiPicker}
               handleSubmit={this.handleSubmit}
+
+              {...this.state}
             />
           )}
       </div >
@@ -481,19 +505,17 @@ EditProfile.propTypes = {
   allData: PropTypes.object,
   space: PropTypes.object,
   currentUser3BoxProfile: PropTypes.object,
-  list: PropTypes.array,
+  additionalFields: PropTypes.array,
   name: PropTypes.string,
   verifiedGithub: PropTypes.string,
   verifiedTwitter: PropTypes.string,
   verifiedEmail: PropTypes.string,
-  did: PropTypes.string,
   emoji: PropTypes.string,
   description: PropTypes.string,
   email: PropTypes.string,
   currentUserAddr: PropTypes.string,
   image: PropTypes.array,
   coverPhoto: PropTypes.array,
-  isFetchingThreeBox: PropTypes.bool,
   copySuccessful: PropTypes.bool,
   cancelFunc: PropTypes.func,
 };
@@ -503,7 +525,6 @@ EditProfile.defaultProps = {
   space: {},
   allData: {},
   currentUser3BoxProfile: {},
-  did: '',
   verifiedEmail: '',
   verifiedGithub: '',
   verifiedTwitter: '',
@@ -514,7 +535,7 @@ EditProfile.defaultProps = {
   currentUserAddr: '',
   image: [],
   coverPhoto: [],
-  isFetchingThreeBox: false,
+  additionalFields: [],
   copySuccessful: false,
 };
 

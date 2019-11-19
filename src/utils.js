@@ -50,3 +50,14 @@ export const capitalizeFirstLetter = (string) => {
   const capitalized = string.charAt(0).toUpperCase() + string.substring(1);
   return capitalized;
 }
+
+export const formatIpfsImageObject = (returnedData) => {
+  const format = [{
+    '@type': 'ImageObject',
+    contentUrl: {
+      '/': returnedData.Hash
+    }
+  }];
+
+  return format;
+};

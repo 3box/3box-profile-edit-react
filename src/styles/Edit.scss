@@ -70,7 +70,7 @@
   width: 100%;
   height: fit-content;
   display: flex;
-  flex-direction: column;
+  // flex-direction: column;
   z-index: 1;
 }
 
@@ -176,8 +176,9 @@
 .edit_profile_info {
   display: flex;
   justify-content: space-between;
-  padding: 0 40px 44px 40px;
-  // border-bottom: 1px solid #f1f1f1;
+  flex-direction: column;
+  padding: 0 40px;
+  width: 100%;
 }
 
 .edit_profile_info--verified {
@@ -210,8 +211,21 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-left: 50px;
+  margin-left: 40px;
   margin-top: -62px;
+}
+
+.edit_profile_value {
+  border-radius: 5px;
+  border-style: none;
+  border: solid 1px #E4E4E4;
+  background-color: rgb(255, 255, 255);
+  height: 44px;
+  padding: 0 15px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  font-size: 14px;
 }
 
 .profPic {
@@ -375,9 +389,6 @@
   color: white;
   margin: 0;
   font-size: 13px;
-  // display: flex;
-  // justify-content: flex-start;
-  // align-items: center;
 }
 
 .edit_profile_verifiedFields_info_text_link {
@@ -391,7 +402,7 @@
 }
 
 .edit_profile_fields_entry_name {
-  width: 80%;
+  width: 86%;
 }
 
 .edit_profile_keyContainer {
@@ -655,7 +666,7 @@
 }
 
 .edit_formControls_content {
-  padding: 1.4em 40px;
+  padding: 40px;
   display: flex;
   align-items: center;
   justify-content: center;

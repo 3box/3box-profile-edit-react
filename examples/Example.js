@@ -46,6 +46,20 @@ class Example extends React.Component {
       myProfile,
       space
     } = this.state;
+
+    const additionalFields = [
+      {
+        key: 'favoriteColor',
+        field: 'Favorite Color'
+      }, {
+        key: 'hometown',
+        field: 'Hometown',
+      }, {
+        key: 'favoriteSport',
+        field: 'Favorite Sport'
+      }
+    ];
+
     return (
       <div className="App">
         <div className="example_page">
@@ -61,6 +75,8 @@ class Example extends React.Component {
                 // spaceName={spaceName}
                 space={space}
                 currentUserAddr={myAddress}
+
+                additionalFields={additionalFields}
 
                 // cancelFunc
 

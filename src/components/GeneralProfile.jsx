@@ -4,6 +4,7 @@ import makeBlockie from 'ethereum-blockies-base64';
 import { Picker } from 'emoji-mart';
 import SVG from 'react-inlinesvg';
 
+import ProfileField from './ProfileField';
 import TwitterIcon from '../assets/TwitterIcon.svg';
 import GithubIcon from '../assets/GithubIcon.svg';
 import EmailIcon from '../assets/EmailIcon.svg';
@@ -39,6 +40,7 @@ class GeneralProfile extends Component {
       handleShowEmojiPicker,
       spaceProfileImage,
       handleSubmit,
+      additionalFields,
     } = this.props;
 
     return (
@@ -51,12 +53,12 @@ class GeneralProfile extends Component {
                 <button
                   className="removeCoverPic removeButton"
                   onClick={() => handleRemovePicture('coverPhoto')}
-                  disabled={(coverPhoto && coverPhoto.length > 0 || (this.coverUpload && this.coverUpload.files && this.coverUpload.files[0])) ? false : true}
+                  disabled={(!!coverPhoto.length || (this.coverUpload && !!this.coverUpload.files.length)) ? false : true}
                   text="remove"
                   type="button"
                 >
                   &#10005;
-                  </button>
+                </button>
               </div>
 
               <div className="coverWrapper">
@@ -73,12 +75,12 @@ class GeneralProfile extends Component {
                   <p>Change picture</p>
                 </label>
 
-                {((!!coverPhoto.length || (this.coverUpload && !!this.coverUpload.length)) && !shouldRemoveCoverPhoto)
+                {((!!coverPhoto.length || (this.coverUpload && !!this.coverUpload.files.length)) && !shouldRemoveCoverPhoto)
                   ? (
                     <img
                       className="coverPic"
                       alt="profile"
-                      src={(this.coverUpload && !!this.coverUpload.length)
+                      src={(this.coverUpload && !!this.coverUpload.files.length)
                         ? URL.createObjectURL(this.coverUpload.files[0])
                         : `https://ipfs.infura.io/ipfs/${coverPhoto[0].contentUrl['/']}`}
                     />
@@ -113,7 +115,7 @@ class GeneralProfile extends Component {
                     &#10005;
                   </button>
 
-                  {(((image && image.length > 0 && image[0].contentUrl) || (this.fileUpload && this.fileUpload.files && this.fileUpload.files[0])) && !shouldRemoveImage)
+                  {((!!image.length || (this.fileUpload && !!this.fileUpload.files.length)) && !shouldRemoveImage)
                     ? (
                       <div className="profPic_div">
                         <div className="profPic_div_overlay">
@@ -158,156 +160,166 @@ class GeneralProfile extends Component {
           </div>
 
           <div className="edit_profile_section">
-
             <div className="edit_profile_info">
-              <div className="edit_profile_fields">
-                <div className="edit_info">
 
-                  <div className="edit_profile_fields_entry noMargin">
-                    <div className="edit_profile_fields_entry_name">
-                      <div className="edit_profile_keyContainer currentAddress">
-                        <p className="edit_profile_keyContainer_currentAddress">
-                          GENERAL PROFILE
+              <div className="edit_profile_fields_entry noMargin">
+                <div className="edit_profile_fields_entry_name">
+                  <div className="edit_profile_keyContainer currentAddress">
+                    <p className="edit_profile_keyContainer_currentAddress">
+                      GENERAL PROFILE
                         </p>
 
-                        <div className="edit_profile_verifiedFields_info infoIcon">
-                          <SVG src={InfoIcon} className="edit_profile_verifiedFields_icons" alt="Info" />
-                          <div className="edit_profile_verifiedFields_hover">
-                            <span className="edit_profile_verifiedFields_info_text">
-                              Data here is accessible to all dApps using your general 3Box profile
+                    <div className="edit_profile_verifiedFields_info infoIcon">
+                      <SVG src={InfoIcon} className="edit_profile_verifiedFields_icons" alt="Info" />
+                      <div className="edit_profile_verifiedFields_hover">
+                        <span className="edit_profile_verifiedFields_info_text">
+                          Data here is accessible to all dApps using your general 3Box profile
                             </span>
-                          </div>
-                        </div>
                       </div>
-                      <p title={currentUserAddr} className="edit_profile_address">
-                        {currentUserAddr}
-                      </p>
                     </div>
                   </div>
+                  <p title={currentUserAddr} className="edit_profile_address">
+                    {currentUserAddr}
+                  </p>
+                </div>
+              </div>
 
-                  <div className="edit_profile_fields_entry nameAndEmoji">
-                    <div className="edit_profile_fields_entry_name">
-                      <div className="edit_profile_keyContainer">
-                        <p className="edit_profile_keyContainer_currentAddress">
-                          NAME
+              <div className="edit_profile_fields_entry nameAndEmoji">
+                <div className="edit_profile_fields_entry_name">
+                  <div className="edit_profile_keyContainer">
+                    <p className="edit_profile_keyContainer_currentAddress">
+                      NAME
                         </p>
-                      </div>
-                      <input
-                        name="name"
-                        type="text"
-                        value={name}
-                        className="edit_profile_value nameField"
-                        onChange={e => handleFormChange(e, 'name')}
-                      />
-                    </div>
+                  </div>
+                  <input
+                    name="name"
+                    type="text"
+                    value={name}
+                    className="edit_profile_value nameField"
+                    onChange={e => handleFormChange(e, 'name')}
+                  />
+                </div>
 
-                    <div className="edit_profile_fields_entry_emoji">
-                      <div className="edit_profile_keyContainer">
-                        <p className="edit_profile_keyContainer_currentAddress">
-                          EMOJI
+                <div className="edit_profile_fields_entry_emoji">
+                  <div className="edit_profile_keyContainer">
+                    <p className="edit_profile_keyContainer_currentAddress">
+                      EMOJI
                         </p>
-                      </div>
+                  </div>
 
-                      {isShowEmoji
-                        && (
-                          <div
-                            className="edit_profile_value_emojiMenu"
-                          >
-                            <Picker
-                              onSelect={selectedEmoji => handleAddEmoji(selectedEmoji)}
-                              title="Pick your spirit emoji"
-                            />
-                          </div>)
-                      }
-
-                      {isShowEmoji && <div className='onClickOutside' onClick={handleShowEmojiPicker} />}
-
+                  {isShowEmoji
+                    && (
                       <div
-                        className="edit_profile_value--spirit"
-                        onClick={handleShowEmojiPicker}
+                        className="edit_profile_value_emojiMenu"
                       >
-                        {
-                          emoji
-                            ? (
-                              <span className="edit_profile_value--spirit_character" role="img">
-                                {emoji.code ? emoji.code : emoji}
-                              </span>
-                            )
-                            : (
-                              <span className="edit_profile_value--spirit_character" role="img" aria-label="unicorn">
-                                🦄
-                                </span>
-                            )
-                        }
-                      </div>
-                    </div>
-                  </div>
+                        <Picker
+                          onSelect={selectedEmoji => handleAddEmoji(selectedEmoji)}
+                          title="Pick your spirit emoji"
+                        />
+                      </div>)
+                  }
 
-                  <div className="edit_profile_verifiedFields">
-                    {verifiedTwitter && (
-                      <div className="edit_profile_verifiedFields_fields">
-                        <SVG src={TwitterIcon} className="edit_profile_verifiedFields_icons" alt="Verified Twitter" />
-                        <p>
-                          {verifiedTwitter}
-                        </p>
-                      </div>
-                    )}
+                  {isShowEmoji && <div className='onClickOutside' onClick={handleShowEmojiPicker} />}
 
-                    {verifiedGithub && (
-                      <div className="edit_profile_verifiedFields_fields">
-                        <SVG src={GithubIcon} className="edit_profile_verifiedFields_icons" alt="Verified Github" />
-                        <p>
-                          {verifiedGithub}
-                        </p>
-                      </div>
-                    )}
-
-                    {verifiedEmail && (
-                      <div className="edit_profile_verifiedFields_fields">
-                        <SVG src={EmailIcon} className="edit_profile_verifiedFields_icons email" alt="Verified Email" />
-                        <p>
-                          {verifiedEmail}
-                        </p>
-                      </div>
-                    )}
-
-                    {(verifiedTwitter || verifiedGithub || verifiedEmail) && (
-                      <div className="edit_profile_verifiedFields_info infoIcon">
-                        <SVG src={InfoIcon} className="edit_profile_verifiedFields_icons" alt="Info" />
-                        <div className="edit_profile_verifiedFields_hover">
-                          <span className="edit_profile_verifiedFields_info_text">
-                            Add or edit verified fields at
-                              <a
-                              href={`https://3box.io/${currentUserAddr}/edit`}
-                              className="edit_profile_verifiedFields_info_text_link"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              3Box.io
-                              </a>
+                  <div
+                    className="edit_profile_value--spirit"
+                    onClick={handleShowEmojiPicker}
+                  >
+                    {
+                      emoji
+                        ? (
+                          <span className="edit_profile_value--spirit_character" role="img">
+                            {emoji.code ? emoji.code : emoji}
                           </span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="edit_profile_fields_entry">
-                    <div className="edit_profile_keyContainer">
-                      <p className="edit_profile_key">DESCRIPTION</p>
-                    </div>
-                    <textarea
-                      name="description"
-                      type="text"
-                      className="edit_profile_value--description"
-                      value={description}
-                      onChange={e => handleFormChange(e, 'description')}
-                    />
+                        )
+                        : (
+                          <span className="edit_profile_value--spirit_character" role="img" aria-label="unicorn">
+                            🦄
+                                </span>
+                        )
+                    }
                   </div>
                 </div>
               </div>
-            </div>
 
+              <div className="edit_profile_verifiedFields">
+                {verifiedTwitter && (
+                  <div className="edit_profile_verifiedFields_fields">
+                    <SVG src={TwitterIcon} className="edit_profile_verifiedFields_icons" alt="Verified Twitter" />
+                    <p>
+                      {verifiedTwitter}
+                    </p>
+                  </div>
+                )}
+
+                {verifiedGithub && (
+                  <div className="edit_profile_verifiedFields_fields">
+                    <SVG src={GithubIcon} className="edit_profile_verifiedFields_icons" alt="Verified Github" />
+                    <p>
+                      {verifiedGithub}
+                    </p>
+                  </div>
+                )}
+
+                {verifiedEmail && (
+                  <div className="edit_profile_verifiedFields_fields">
+                    <SVG src={EmailIcon} className="edit_profile_verifiedFields_icons email" alt="Verified Email" />
+                    <p>
+                      {verifiedEmail}
+                    </p>
+                  </div>
+                )}
+
+                {(verifiedTwitter || verifiedGithub || verifiedEmail) && (
+                  <div className="edit_profile_verifiedFields_info infoIcon">
+                    <SVG src={InfoIcon} className="edit_profile_verifiedFields_icons" alt="Info" />
+                    <div className="edit_profile_verifiedFields_hover">
+                      <span className="edit_profile_verifiedFields_info_text">
+                        Add or edit verified fields at
+                              <a
+                          href={`https://3box.io/${currentUserAddr}/edit`}
+                          className="edit_profile_verifiedFields_info_text_link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          3Box.io
+                              </a>
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="edit_profile_fields_entry">
+                <div className="edit_profile_keyContainer">
+                  <p className="edit_profile_key">DESCRIPTION</p>
+                </div>
+                <textarea
+                  name="description"
+                  type="text"
+                  className="edit_profile_value--description"
+                  value={description}
+                  onChange={e => handleFormChange(e, 'description')}
+                />
+              </div>
+            </div>
           </div>
+
+          {!!additionalFields.length && (
+            <div className="edit_profile_section">
+              <div className="edit_profile_info">
+                {additionalFields.map(entry => (
+                  <ProfileField
+                    customField={entry}
+                    handleFormChange={handleFormChange}
+                    key={entry.key}
+                    {...this.props}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="edit_formControls">
             <div className="edit_formControls_content">
               <button
@@ -354,6 +366,7 @@ GeneralProfile.propTypes = {
   email: PropTypes.string,
   currentUserAddr: PropTypes.string,
   image: PropTypes.array,
+  additionalFields: PropTypes.array,
   spaceProfileImage: PropTypes.array,
   coverPhoto: PropTypes.array,
   isFetchingThreeBox: PropTypes.bool,
@@ -388,6 +401,7 @@ GeneralProfile.defaultProps = {
   currentUserAddr: '',
   image: [],
   coverPhoto: [],
+  additionalFields: [],
   isFetchingThreeBox: false,
   copySuccessful: false,
 };

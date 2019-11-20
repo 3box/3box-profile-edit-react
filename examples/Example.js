@@ -48,14 +48,14 @@ class Example extends React.Component {
 
     const additionalFields = [
       {
-        key: 'favoriteColor',
-        field: 'Favorite Color'
+        key: 'preferredCoin',
+        field: 'Preferred Coin'
       }, {
-        key: 'hometown',
-        field: 'Hometown',
+        key: 'backupAddress',
+        field: 'Backup Address',
       }, {
-        key: 'favoriteSport',
-        field: 'Favorite Sport'
+        key: 'spiritCryptoKittie',
+        field: 'Spirit CryptoKitty'
       }
     ];
 

@@ -59,6 +59,7 @@
     "webpack-dev-server": "^3.1.4"
   },
   "peerDependencies": {
+    "3box": "^1.13.2",
     "react": ">= 16.3.0",
     "react-dom": ">= 16.3.0"
   },
@@ -66,7 +67,6 @@
     "babel-core": "7.0.0-bridge.0"
   },
   "dependencies": {
-    "3box": "^1.13.2",
     "3id-resolver": "0.0.6",
     "@babel/runtime": "^7.6.0",
     "async": "^3.1.0",

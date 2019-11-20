@@ -51,6 +51,7 @@ class EditProfile extends Component {
       isSpaceCoverPicEdited: false,
       isSpacePicEdited: false,
       isShowEmoji: false,
+
       shouldRemoveImage: false,
       shouldRemoveCoverPhoto: false,
       shouldRemoveSpaceProfileImage: false,
@@ -65,10 +66,6 @@ class EditProfile extends Component {
 
   async componentDidMount() {
     const { currentUser3BoxProfile, space, currentUserAddr, additionalFields } = this.props;
-
-    const isSpaceProfileDefault = await space.public.get('isSpaceProfileDefault');
-    this.setState({ isSpaceProfileDefault });
-
 
     const generalProfile = currentUser3BoxProfile || await Box.getProfile(currentUserAddr);
     const spaceProfile = await space.public.all();
@@ -88,8 +85,16 @@ class EditProfile extends Component {
       });
     }
 
+    const isSpaceProfileDefault = await space.public.get('isSpaceProfileDefault');
+
     this.fetchVerifiedFields();
-    this.setState({ originalProfile: generalProfile, originalSpaceProfile: spaceProfile })
+
+    this.setState({
+      originalProfile: generalProfile,
+      originalSpaceProfile: spaceProfile,
+      isSpaceProfileDefault,
+      isShowGeneralProfile: !isSpaceProfileDefault,
+    })
   }
 
   async componentDidUpdate(prevProps) {
@@ -380,11 +385,14 @@ class EditProfile extends Component {
     // history.push(`/${currentUserAddr}/${routes.ACTIVITY}`);
   }
 
+  // save function that disables save after
+
   render() {
     const {
       currentUserAddr,
       cancelFunc,
       additionalFields,
+      space,
     } = this.props;
 
     const {
@@ -404,6 +412,7 @@ class EditProfile extends Component {
       verifiedEmail,
       // isSpaceProfileDefault,
       isShowGeneralProfile,
+      isSpaceProfileDefault,
 
       spaceProfileName,
       spaceProfileDescription,
@@ -460,6 +469,8 @@ class EditProfile extends Component {
             cancelFunc={cancelFunc}
             spaceProfileImage={spaceProfileImage}
             additionalFields={additionalFields}
+            space={space}
+            isSpaceProfileDefault={isSpaceProfileDefault}
 
             handleRemovePicture={this.handleRemovePicture}
             coverUpload={this.coverUpload}
@@ -480,9 +491,13 @@ class EditProfile extends Component {
               emoji={spaceProfileEmoji}
               spaceProfileCoverPhoto={spaceProfileCoverPhoto}
               spaceProfileImage={spaceProfileImage}
+              
               shouldRemoveSpaceProfileCoverPhoto={shouldRemoveSpaceProfileCoverPhoto}
               shouldRemoveSpaceProfileImage={shouldRemoveSpaceProfileImage}
               image={image}
+
+              space={space}
+              isSpaceProfileDefault={isSpaceProfileDefault}
 
               currentUserAddr={currentUserAddr}
               isShowEmoji={isShowEmoji}

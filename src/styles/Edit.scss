@@ -105,6 +105,11 @@
   }
 }
 
+.edit_profile_divider {
+  width: calc(100% - 2px);
+  border: 1px solid $borderColor;
+}
+
 .edit_profile_switch_pic {
   width: 35px;
   height: 35px;
@@ -312,7 +317,7 @@
 }
 
 .edit_profile_fields_entry {
-  margin-top: 2em;
+  margin-top: 20px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -409,6 +414,7 @@
   display: flex;
   justify-content: flex-start;
   position: relative;
+  align-items: center;
 
   p {
     margin-bottom: 15px;
@@ -417,11 +423,17 @@
   }
 }
 
-.edit_profile_keyContainer.currentAddress {
+.edit_profile_keyContainer_currentAddressWrapper {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+}
+
+.edit_profile_keyContainer.currentAddress {
+  display: flex;
+  justify-content: space-between;
   margin: 13px 0;
+  width: 100%;
 
   .edit_profile_keyContainer_currentAddress {
     margin: 0 6px 0 0;
@@ -430,6 +442,14 @@
 
 .currentAddress {
   margin-bottom: 0;
+}
+
+.edit_profile_keyContainer.spaceProfile {
+  margin: 30px 40px 0 40px;
+
+  .edit_profile_keyContainer_currentAddress {
+    margin: 2px 6px 0 0;
+  }
 }
 
 .edit_profile_value {
@@ -665,6 +685,13 @@
   justify-content: flex-end;
 }
 
+.edit_profile_spaceProfile {
+  margin-top: 50px;
+  background-color: $backgroundHue;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+}
+
 .edit_formControls_content {
   padding: 40px;
   display: flex;
@@ -846,6 +873,144 @@
 
 .verifiedForm--email {
   padding: 0 15px 0 36px;
+}
+
+.options_wrapper {
+  position: relative;
+  width: fit-content;
+}
+
+.options_button {
+  padding: 10px 0 10px 10px;
+  background-color: transparent;
+  padding: 0;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  height: 20px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: transparent;
+    border: none;
+  }
+}
+
+.options_button_icon {
+  opacity: .3;
+  width: 16px;
+}
+
+.options_menu.show {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0%);
+  transition-delay: 0s, 0s, 0.3s;
+}
+
+.options_menu {
+  position: absolute;
+  width: 210px;
+  height: 100px;
+  background-color: white;
+  padding: 12px 16px;
+  box-sizing: border-box;
+
+  transition: transform ease 0.9s, opacity ease 0.1s;
+  transform: translateY(-4px);
+  top: 24px;
+  right: 0;
+  text-align: left;
+  border-radius: 5px;
+  border: 1px solid #E4E4E4;
+  box-shadow: 0 6px 10px 0 #00000025, 0 16px 24px 0 #00000025;
+
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-14px);
+  transition: all 0.3s ease-in-out 0s,
+    visibility 0s linear 0.3s,
+    z-index 0s linear 0.01s;
+  z-index: 1;
+
+  .options_menu_header {
+    margin: 0 0 20px 0;
+    font-size: 15px;
+  }
+
+  .options_menu_section_option {
+    font-size: 13px;
+    color: $lighterFont;
+    margin: 0 16px 0 0;
+  }
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.options_menu_section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  min-width: 50px;
+  height: 25px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  opacity: .6;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 19px;
+  width: 19px;
+  left: 4px;
+  bottom: 3px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked+.slider {
+  background-color: #2196F3;
+}
+
+input:focus+.slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.slider:before {
+  transform: translateX(23px);
 }
 
 @media only screen and (max-width: 600px) {

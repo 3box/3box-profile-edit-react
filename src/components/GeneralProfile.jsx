@@ -4,7 +4,8 @@ import makeBlockie from 'ethereum-blockies-base64';
 import { Picker } from 'emoji-mart';
 import SVG from 'react-inlinesvg';
 
-import ProfileField from './ProfileField';
+import { CustomFields, FormControls } from './ProfileComponents';
+import EditOptions from './EditOptions';
 import TwitterIcon from '../assets/TwitterIcon.svg';
 import GithubIcon from '../assets/GithubIcon.svg';
 import EmailIcon from '../assets/EmailIcon.svg';
@@ -41,6 +42,8 @@ class GeneralProfile extends Component {
       spaceProfileImage,
       handleSubmit,
       additionalFields,
+      space,
+      isSpaceProfileDefault,
     } = this.props;
 
     return (
@@ -163,25 +166,28 @@ class GeneralProfile extends Component {
             <div className="edit_profile_info">
 
               <div className="edit_profile_fields_entry noMargin">
-                <div className="edit_profile_fields_entry_name">
-                  <div className="edit_profile_keyContainer currentAddress">
+                <div className="edit_profile_keyContainer currentAddress">
+                  <div className="edit_profile_keyContainer_currentAddressWrapper">
                     <p className="edit_profile_keyContainer_currentAddress">
                       GENERAL PROFILE
-                        </p>
+                      </p>
 
                     <div className="edit_profile_verifiedFields_info infoIcon">
                       <SVG src={InfoIcon} className="edit_profile_verifiedFields_icons" alt="Info" />
                       <div className="edit_profile_verifiedFields_hover">
                         <span className="edit_profile_verifiedFields_info_text">
                           Data here is accessible to all dApps using your general 3Box profile
-                            </span>
+                        </span>
                       </div>
                     </div>
                   </div>
-                  <p title={currentUserAddr} className="edit_profile_address">
-                    {currentUserAddr}
-                  </p>
+
+                  <EditOptions space={space} isSpaceProfileDefault={isSpaceProfileDefault} />
                 </div>
+
+                <p title={currentUserAddr} className="edit_profile_address">
+                  {currentUserAddr}
+                </p>
               </div>
 
               <div className="edit_profile_fields_entry nameAndEmoji">
@@ -189,7 +195,7 @@ class GeneralProfile extends Component {
                   <div className="edit_profile_keyContainer">
                     <p className="edit_profile_keyContainer_currentAddress">
                       NAME
-                        </p>
+                    </p>
                   </div>
                   <input
                     name="name"
@@ -216,8 +222,8 @@ class GeneralProfile extends Component {
                           onSelect={selectedEmoji => handleAddEmoji(selectedEmoji)}
                           title="Pick your spirit emoji"
                         />
-                      </div>)
-                  }
+                      </div>
+                    )}
 
                   {isShowEmoji && <div className='onClickOutside' onClick={handleShowEmojiPicker} />}
 
@@ -235,7 +241,7 @@ class GeneralProfile extends Component {
                         : (
                           <span className="edit_profile_value--spirit_character" role="img" aria-label="unicorn">
                             🦄
-                                </span>
+                          </span>
                         )
                     }
                   </div>
@@ -283,7 +289,7 @@ class GeneralProfile extends Component {
                           rel="noopener noreferrer"
                         >
                           3Box.io
-                              </a>
+                        </a>
                       </span>
                     </div>
                   </div>
@@ -305,45 +311,24 @@ class GeneralProfile extends Component {
             </div>
           </div>
 
-          {!!additionalFields.length && (
-            <div className="edit_profile_section">
-              <div className="edit_profile_info">
-                {additionalFields.map(entry => (
-                  <ProfileField
-                    customField={entry}
-                    handleFormChange={handleFormChange}
-                    key={entry.key}
-                    {...this.props}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="edit_formControls">
-            <div className="edit_formControls_content">
-              <button
-                type="submit"
-                disabled={isSaveDisabled}
-                className="edit_formControls_content_save"
-                onClick={
-                  (e) => {
-                    this.setState({ isSaveDisabled: true }, () => handleSubmit(e));
-                  }}
-              >
-                Save
-                </button>
-
-              {cancelFunc && (
-                <button
-                  className="edit_cancel"
-                  onClick={() => cancelFunc(currentUserAddr)}
-                >
-                  Cancel
-                </button>
-              )}
-            </div>
-          </div>
+          {additionalFields.length ? (
+            <CustomFields
+              additionalFields={additionalFields}
+              handleFormChange={handleFormChange}
+              isSaveDisabled={isSaveDisabled}
+              handleSubmit={handleSubmit}
+              cancelFunc={cancelFunc}
+              currentUserAddr={currentUserAddr}
+              {...this.props}
+            />
+          ) : (
+              <FormControls
+                isSaveDisabled={isSaveDisabled}
+                handleSubmit={handleSubmit}
+                cancelFunc={cancelFunc}
+                currentUserAddr={currentUserAddr}
+              />
+            )}
         </div>
       </div>
     );
@@ -353,6 +338,7 @@ class GeneralProfile extends Component {
 GeneralProfile.propTypes = {
   box: PropTypes.object,
   allData: PropTypes.object,
+  space: PropTypes.object,
   currentUser3BoxProfile: PropTypes.object,
   list: PropTypes.array,
   name: PropTypes.string,
@@ -375,6 +361,7 @@ GeneralProfile.propTypes = {
   isSaveDisabled: PropTypes.bool,
   shouldRemoveCoverPhoto: PropTypes.bool,
   shouldRemoveImage: PropTypes.bool,
+  isSpaceProfileDefault: PropTypes.bool,
   cancelFunc: PropTypes.func,
   handleRemovePicture: PropTypes.func.isRequired,
   handleUpdatePic: PropTypes.func.isRequired,
@@ -389,6 +376,7 @@ GeneralProfile.defaultProps = {
   box: {},
   allData: {},
   currentUser3BoxProfile: {},
+  space: {},
   did: '',
   verifiedEmail: '',
   verifiedGithub: '',
@@ -404,6 +392,7 @@ GeneralProfile.defaultProps = {
   additionalFields: [],
   isFetchingThreeBox: false,
   copySuccessful: false,
+  isSpaceProfileDefault: false,
 };
 
 export default GeneralProfile;

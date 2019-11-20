@@ -5,6 +5,7 @@ import { Picker } from 'emoji-mart';
 import SVG from 'react-inlinesvg';
 
 import ProfileField from './ProfileField';
+import EditOptions from './EditOptions';
 import InfoIcon from '../assets/InfoIcon.svg';
 
 class GeneralProfile extends Component {
@@ -35,6 +36,8 @@ class GeneralProfile extends Component {
       handleShowEmojiPicker,
       handleSubmit,
       additionalFields,
+      space,
+      isSpaceProfileDefault,
     } = this.props;
 
     return (
@@ -145,23 +148,22 @@ class GeneralProfile extends Component {
                 className="edit_profile_switch"
                 onClick={handleSwitchProfile}
               >
-                {!!image.length ? <img src={`https://ipfs.infura.io/ipfs/${image[0].contentUrl['/']}`} className="edit_profile_switch_pic" alt="Other profile" />
+                {image.length ? <img src={`https://ipfs.infura.io/ipfs/${image[0].contentUrl['/']}`} className="edit_profile_switch_pic" alt="Other profile" />
                   : <div className="edit_profile_switch_pic" />}
                 <p className="edit_profile_switch_text">SWITCH PROFILE</p>
               </div>
             </div>
-
           </div>
 
           <div className="edit_profile_section">
             <div className="edit_profile_info">
 
               <div className="edit_profile_fields_entry noMargin">
-                <div className="edit_profile_fields_entry_name">
-                  <div className="edit_profile_keyContainer currentAddress">
+                <div className="edit_profile_keyContainer currentAddress">
+                  <div className="edit_profile_keyContainer_currentAddressWrapper">
                     <p className="edit_profile_keyContainer_currentAddress">
                       SPACE PROFILE
-                        </p>
+                    </p>
 
                     <div className="edit_profile_verifiedFields_info infoIcon">
                       <SVG src={InfoIcon} className="edit_profile_verifiedFields_icons" alt="Info" />
@@ -172,10 +174,17 @@ class GeneralProfile extends Component {
                       </div>
                     </div>
                   </div>
-                  <p title={currentUserAddr} className="edit_profile_address">
-                    {currentUserAddr}
-                  </p>
+
+                  <EditOptions
+                    space={space}
+                    isSpaceProfileDefault={isSpaceProfileDefault}
+                    fromSpaceProfile
+                  />
                 </div>
+
+                <p title={currentUserAddr} className="edit_profile_address">
+                  {currentUserAddr}
+                </p>
               </div>
 
               <div className="edit_profile_fields_entry nameAndEmoji">
@@ -206,8 +215,8 @@ class GeneralProfile extends Component {
                           onSelect={selectedEmoji => handleAddEmoji(selectedEmoji, true)}
                           title="Pick your spirit emoji"
                         />
-                      </div>)
-                  }
+                      </div>
+                    )}
 
                   {isShowEmoji
                     && <div className='onClickOutside' onClick={handleShowEmojiPicker} />}
@@ -216,19 +225,17 @@ class GeneralProfile extends Component {
                     className="edit_profile_value--spirit"
                     onClick={handleShowEmojiPicker}
                   >
-                    {
-                      emoji
-                        ? (
-                          <span className="edit_profile_value--spirit_character" role="img">
-                            {emoji.code ? emoji.code : emoji}
+                    {emoji
+                      ? (
+                        <span className="edit_profile_value--spirit_character" role="img">
+                          {emoji.code ? emoji.code : emoji}
+                        </span>
+                      )
+                      : (
+                        <span className="edit_profile_value--spirit_character" role="img" aria-label="unicorn">
+                          🦄
                           </span>
-                        )
-                        : (
-                          <span className="edit_profile_value--spirit_character" role="img" aria-label="unicorn">
-                            🦄
-                              </span>
-                        )
-                    }
+                      )}
                   </div>
                 </div>
               </div>
@@ -299,6 +306,7 @@ class GeneralProfile extends Component {
 GeneralProfile.propTypes = {
   box: PropTypes.object,
   allData: PropTypes.object,
+  space: PropTypes.object,
   currentUser3BoxProfile: PropTypes.object,
   additionalFields: PropTypes.array,
   name: PropTypes.string,
@@ -317,6 +325,7 @@ GeneralProfile.propTypes = {
   copySuccessful: PropTypes.bool,
   isShowEmoji: PropTypes.bool,
   isSaveDisabled: PropTypes.bool,
+  isSpaceProfileDefault: PropTypes.bool,
   shouldRemoveSpaceProfileImage: PropTypes.bool,
   shouldRemoveUserPic: PropTypes.bool,
   cancelFunc: PropTypes.func,
@@ -332,6 +341,7 @@ GeneralProfile.propTypes = {
 GeneralProfile.defaultProps = {
   box: {},
   allData: {},
+  space: {},
   currentUser3BoxProfile: {},
   verifiedEmail: '',
   verifiedGithub: '',
@@ -348,6 +358,7 @@ GeneralProfile.defaultProps = {
   additionalFields: [],
   isFetchingThreeBox: false,
   copySuccessful: false,
+  isSpaceProfileDefault: false,
 };
 
 export default GeneralProfile;

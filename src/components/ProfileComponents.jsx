@@ -1,18 +1,19 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import SVG from 'react-inlinesvg';
 
 import ProfileField from './ProfileField';
 import InfoIcon from '../assets/InfoIcon.svg';
+import Loading from '../assets/Loading.svg';
 
 export const CustomFields = (props) => {
   const {
     additionalFields,
     handleFormChange,
-    isSaveDisabled,
     handleSubmit,
     cancelFunc,
     currentUserAddr,
+    isSaveLoading,
   } = props;
 
   return (
@@ -48,35 +49,50 @@ export const CustomFields = (props) => {
       </div>
 
       <FormControls
-        isSaveDisabled={isSaveDisabled}
         handleSubmit={handleSubmit}
         cancelFunc={cancelFunc}
         currentUserAddr={currentUserAddr}
+        isSaveLoading={isSaveLoading}
       />
     </div>
   );
 };
 
+CustomFields.propTypes = {
+  currentUserAddr: PropTypes.string,
+  additionalFields: PropTypes.array,
+  cancelFunc: PropTypes.func,
+  handleSubmit: PropTypes.func,
+  handleFormChange: PropTypes.func,
+  isSaveLoading: PropTypes.bool,
+};
+
+CustomFields.defaultProps = {
+  currentUserAddr: '',
+  isSaveLoading: false,
+};
 
 export const FormControls = (props) => {
   const {
-    isSaveDisabled,
     handleSubmit,
     cancelFunc,
     currentUserAddr,
+    isSaveLoading,
   } = props;
 
   return (
     <div className="edit_formControls">
       <div className="edit_formControls_content">
+        {isSaveLoading && <SVG src={Loading} alt="loading" className="edit_load" />}
+
         <button
           type="submit"
-          disabled={isSaveDisabled}
           className="edit_formControls_content_save"
-          onClick={(e) => this.setState({ isSaveDisabled: true }, () => handleSubmit(e))}
+          onClick={(e) => handleSubmit(e)}
         >
           Save
         </button>
+
 
         {cancelFunc && (
           <button
@@ -89,4 +105,16 @@ export const FormControls = (props) => {
       </div>
     </div >
   )
+};
+
+FormControls.propTypes = {
+  currentUserAddr: PropTypes.string,
+  cancelFunc: PropTypes.func,
+  handleSubmit: PropTypes.func,
+  isSaveLoading: PropTypes.bool,
+};
+
+FormControls.defaultProps = {
+  currentUserAddr: '',
+  isSaveLoading: false,
 };

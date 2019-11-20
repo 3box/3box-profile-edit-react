@@ -7,8 +7,9 @@ import SVG from 'react-inlinesvg';
 import ProfileField from './ProfileField';
 import EditOptions from './EditOptions';
 import InfoIcon from '../assets/InfoIcon.svg';
+import { FormControls } from './ProfileComponents';
 
-class GeneralProfile extends Component {
+class SpaceProfile extends Component {
   constructor(props) {
     super(props);
     this.state = {}
@@ -16,16 +17,15 @@ class GeneralProfile extends Component {
 
   render() {
     const {
+      spaceProfileName,
       spaceProfileCoverPhoto,
       image,
       spaceProfileImage,
       currentUserAddr,
-      emoji,
-      description,
+      spaceProfileEmoji,
+      spaceProfileDescription,
       isShowEmoji,
-      isSaveDisabled,
       cancelFunc,
-      name,
       handleRemovePicture,
       handleUpdatePic,
       handleAddEmoji,
@@ -38,7 +38,12 @@ class GeneralProfile extends Component {
       additionalFields,
       space,
       isSpaceProfileDefault,
+      onCheckbox,
+      isSaveLoading,
     } = this.props;
+
+    const isCoverImage = !!spaceProfileCoverPhoto.length || (this.coverUpload && !!this.coverUpload.files.length);
+    const isImage = !!spaceProfileImage.length || (this.fileUpload && !!this.fileUpload.files.length);
 
     return (
       <div className="edit">
@@ -50,7 +55,7 @@ class GeneralProfile extends Component {
                 <button
                   className="removeCoverPic removeButton"
                   onClick={() => handleRemovePicture('spaceProfileCoverPhoto', true)}
-                  disabled={(spaceProfileCoverPhoto && spaceProfileCoverPhoto.length > 0 || (this.coverUpload && this.coverUpload.files && this.coverUpload.files[0])) ? false : true}
+                  disabled={isCoverImage ? false : true}
                   text="remove"
                   type="button"
                 >
@@ -72,7 +77,7 @@ class GeneralProfile extends Component {
                   <p>Change picture</p>
                 </label>
 
-                {((!!spaceProfileCoverPhoto.length || (this.coverUpload && !!this.coverUpload.files.length)) && !shouldRemoveSpaceProfileImage)
+                {(isCoverImage && !shouldRemoveSpaceProfileImage)
                   ? (
                     <img
                       className="coverPic"
@@ -105,14 +110,14 @@ class GeneralProfile extends Component {
                   <button
                     className="removeButton removePic"
                     onClick={() => handleRemovePicture('spaceProfileImage', true)}
-                    disabled={((spaceProfileImage && spaceProfileImage.length > 0 && spaceProfileImage[0].contentUrl) || (this.fileUpload && this.fileUpload.files && this.fileUpload.files[0])) ? false : true}
+                    disabled={isImage ? false : true}
                     text="remove"
                     type="button"
                   >
                     &#10005;
                   </button>
 
-                  {(((spaceProfileImage && spaceProfileImage.length > 0 && spaceProfileImage[0].contentUrl) || (this.fileUpload && this.fileUpload.files && this.fileUpload.files[0])) && !shouldRemoveUserPic)
+                  {(isImage && !shouldRemoveUserPic)
                     ? (
                       <div className="profPic_div">
                         <div className="profPic_div_overlay">
@@ -178,6 +183,7 @@ class GeneralProfile extends Component {
                   <EditOptions
                     space={space}
                     isSpaceProfileDefault={isSpaceProfileDefault}
+                    onCheckbox={onCheckbox}
                     fromSpaceProfile
                   />
                 </div>
@@ -195,7 +201,7 @@ class GeneralProfile extends Component {
                   <input
                     name="name"
                     type="text"
-                    value={name}
+                    value={spaceProfileName}
                     className="edit_profile_value nameField"
                     onChange={e => handleFormChange(e, 'spaceProfileName')}
                   />
@@ -218,23 +224,22 @@ class GeneralProfile extends Component {
                       </div>
                     )}
 
-                  {isShowEmoji
-                    && <div className='onClickOutside' onClick={handleShowEmojiPicker} />}
+                  {isShowEmoji && <div className='onClickOutside' onClick={handleShowEmojiPicker} />}
 
                   <div
                     className="edit_profile_value--spirit"
                     onClick={handleShowEmojiPicker}
                   >
-                    {emoji
+                    {spaceProfileEmoji
                       ? (
                         <span className="edit_profile_value--spirit_character" role="img">
-                          {emoji.code ? emoji.code : emoji}
+                          {spaceProfileEmoji.code ? spaceProfileEmoji.code : spaceProfileEmoji}
                         </span>
                       )
                       : (
                         <span className="edit_profile_value--spirit_character" role="img" aria-label="unicorn">
                           🦄
-                          </span>
+                        </span>
                       )}
                   </div>
                 </div>
@@ -250,7 +255,7 @@ class GeneralProfile extends Component {
                   name="description"
                   type="text"
                   className="edit_profile_value--description"
-                  value={description}
+                  value={spaceProfileDescription}
                   onChange={e => handleFormChange(e, 'spaceProfileDescription')}
                 />
               </div>
@@ -273,49 +278,31 @@ class GeneralProfile extends Component {
             </div>
           )}
 
-          <div className="edit_formControls">
-            <div className="edit_formControls_content">
-              <button
-                type="submit"
-                disabled={isSaveDisabled}
-                className="edit_formControls_content_save"
-                onClick={
-                  (e) => {
-                    this.setState({ isSaveDisabled: true }, () => handleSubmit(e, true));
-                  }}
-              >
-                Save
-                </button>
-
-              {cancelFunc && (
-                <button
-                  className="edit_cancel"
-                  onClick={() => cancelFunc(currentUserAddr)}
-                >
-                  Cancel
-                </button>
-              )}
-            </div>
-          </div>
+          <FormControls
+            isSaveLoading={isSaveLoading}
+            cancelFunc={cancelFunc}
+            handleSubmit={handleSubmit}
+            currentUserAddr={currentUserAddr}
+          />
         </div>
-      </div>
+      </div >
     );
   }
 }
 
-GeneralProfile.propTypes = {
+SpaceProfile.propTypes = {
   box: PropTypes.object,
   allData: PropTypes.object,
   space: PropTypes.object,
   currentUser3BoxProfile: PropTypes.object,
   additionalFields: PropTypes.array,
-  name: PropTypes.string,
+  spaceProfileName: PropTypes.string,
   spaceName: PropTypes.string,
   verifiedGithub: PropTypes.string,
   verifiedTwitter: PropTypes.string,
   verifiedEmail: PropTypes.string,
-  emoji: PropTypes.string,
-  description: PropTypes.string,
+  spaceProfileEmoji: PropTypes.string,
+  spaceProfileDescription: PropTypes.string,
   email: PropTypes.string,
   currentUserAddr: PropTypes.string,
   image: PropTypes.array,
@@ -324,10 +311,10 @@ GeneralProfile.propTypes = {
   isFetchingThreeBox: PropTypes.bool,
   copySuccessful: PropTypes.bool,
   isShowEmoji: PropTypes.bool,
-  isSaveDisabled: PropTypes.bool,
   isSpaceProfileDefault: PropTypes.bool,
   shouldRemoveSpaceProfileImage: PropTypes.bool,
   shouldRemoveUserPic: PropTypes.bool,
+  isSaveLoading: PropTypes.bool,
   cancelFunc: PropTypes.func,
   handleRemovePicture: PropTypes.func.isRequired,
   handleUpdatePic: PropTypes.func.isRequired,
@@ -335,10 +322,11 @@ GeneralProfile.propTypes = {
   handleFormChange: PropTypes.func.isRequired,
   handleSwitchProfile: PropTypes.func.isRequired,
   handleShowEmojiPicker: PropTypes.func.isRequired,
+  onCheckbox: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
 };
 
-GeneralProfile.defaultProps = {
+SpaceProfile.defaultProps = {
   box: {},
   allData: {},
   space: {},
@@ -346,19 +334,20 @@ GeneralProfile.defaultProps = {
   verifiedEmail: '',
   verifiedGithub: '',
   verifiedTwitter: '',
-  name: '',
+  spaceProfileName: '',
   spaceName: '',
-  description: '',
-  emoji: '',
+  spaceProfileDescription: '',
+  spaceProfileEmoji: '',
   email: '',
   currentUserAddr: '',
   image: [],
   spaceProfileImage: [],
   spaceProfileCoverPhoto: [],
   additionalFields: [],
+  isSaveLoading: false,
   isFetchingThreeBox: false,
   copySuccessful: false,
   isSpaceProfileDefault: false,
 };
 
-export default GeneralProfile;
+export default SpaceProfile;

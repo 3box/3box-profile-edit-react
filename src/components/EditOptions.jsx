@@ -25,15 +25,15 @@ class EditOptions extends Component {
     }
   }
 
-  onCheckbox = async () => {
-    const { isSpaceProfileDefault } = this.state;
-    const { space } = this.props;
+  // onCheckbox = async () => {
+  //   const { isSpaceProfileDefault } = this.state;
+  //   const { space } = this.props;
 
-    const value = !isSpaceProfileDefault;
-    await space.public.set('isSpaceProfileDefault', value);
+  //   const value = !isSpaceProfileDefault;
+  //   await space.public.set('isSpaceProfileDefault', value);
 
-    this.setState({ isSpaceProfileDefault: value });
-  }
+  //   this.setState({ isSpaceProfileDefault: value });
+  // }
 
   handleShowOptionsMenu = () => {
     const { showOptions } = this.state;
@@ -42,7 +42,7 @@ class EditOptions extends Component {
 
   render() {
     const { showOptions, isSpaceProfileDefault } = this.state;
-    const { fromSpaceProfile } = this.props;
+    const { fromSpaceProfile, onCheckbox } = this.props;
     const valueToShow = fromSpaceProfile ? isSpaceProfileDefault : !isSpaceProfileDefault;
 
     return (
@@ -72,7 +72,7 @@ class EditOptions extends Component {
                 type="checkbox"
                 id="enableWall"
                 checked={valueToShow}
-                onChange={this.onCheckbox}
+                onChange={onCheckbox}
               />
               <span className="slider round" />
             </label>
@@ -92,5 +92,14 @@ class EditOptions extends Component {
     );
   }
 }
+
+EditOptions.propTypes = {
+  onCheckbox: PropTypes.func.isRequired,
+  fromSpaceProfile: PropTypes.bool,
+};
+
+EditOptions.defaultProps = {
+  fromSpaceProfile: false,
+};
 
 export default EditOptions;

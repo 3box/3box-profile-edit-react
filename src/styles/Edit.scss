@@ -598,22 +598,10 @@
   width: 70%;
 }
 
-.container {
-  position: fixed;
-  left: 0px;
-  top: 0px;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.76);
-  padding: 1rem;
-  z-index: 5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  img {
-    width: 100px;
-  }
+.edit_load {
+  width: 24px;
+  height: auto;
+  margin-right: 26px;
 }
 
 .fileInput {

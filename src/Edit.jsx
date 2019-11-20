@@ -6,13 +6,12 @@ import SVG from 'react-inlinesvg';
 import Box from '3box';
 
 import {
-  // copyToClipBoard,
   editProfileFields,
   capitalizeFirstLetter,
   formatIpfsImageObject,
+  // copyToClipBoard,
 } from './utils';
-
-import { saveCustomFields } from './helpers';
+import { saveCustomFields, saveBasicTextFields } from './helpers';
 
 import {
   FileSizeModal,
@@ -20,10 +19,7 @@ import {
 } from './components/Modals';
 import GeneralProfile from './components/GeneralProfile';
 import SpaceProfile from './components/SpaceProfile';
-import Loading from './assets/Loading.svg';
 import './styles';
-// import Private from './assets/Private.svg';
-// import Verified from './assets/Verified.svg';
 
 class EditProfile extends Component {
   constructor(props) {
@@ -42,7 +38,6 @@ class EditProfile extends Component {
 
       buffer: '',
 
-      isSaveDisabled: true,
       isShowGeneralProfile: true,
       isSpaceProfileDefault: false,
       isSaveLoading: false,
@@ -58,7 +53,6 @@ class EditProfile extends Component {
       shouldRemoveSpaceProfileCoverPhoto: false,
       shouldShowFIleSizeModal: false,
 
-      editedArray: [],
       coverPhoto: [],
       image: [],
     };
@@ -69,7 +63,7 @@ class EditProfile extends Component {
 
     const generalProfile = currentUser3BoxProfile || await Box.getProfile(currentUserAddr);
     const spaceProfile = await space.public.all();
-    console.log('spaceProfile', spaceProfile);
+
     editProfileFields.forEach((fieldSet) => {
       const generalValue = generalProfile[fieldSet[0]];
       const spaceValue = spaceProfile[fieldSet[0]];
@@ -126,14 +120,6 @@ class EditProfile extends Component {
     if (box !== prevProps.box) this.fetchVerifiedFields();
   }
 
-  handleUpdateDefaultProfile = async () => {
-    const { isSpaceProfileDefault } = this.state;
-    const { space } = this.props;
-
-    await space.public.set('isSpaceProfileDefault', !isSpaceProfileDefault);
-    this.setState({ isSpaceProfileDefault: !isSpaceProfileDefault });
-  }
-
   handleSwitchProfile = async () => {
     const { isShowGeneralProfile } = this.state;
     this.setState({ isShowGeneralProfile: !isShowGeneralProfile });
@@ -170,41 +156,21 @@ class EditProfile extends Component {
     });
   }
 
-  handleFormChange = (e, property) => {
-    const { editedArray } = this.state;
-    const fieldState = this.state[property];
-    const fieldProp = this.props[property];
-    const isFieldsSame = fieldState === fieldProp;
-
-    let editedField;
-
-    this.setState({ [property]: e.target.value },
-      () => {
-        if (editedField) {
-          if (fieldState === '') {
-            this.setState({ [`${editedField}Edited`]: false });
-          } else if (!isFieldsSame && fieldState !== '') {
-            this.setState({ [`${editedField}Edited`]: true });
-          }
-        } else {
-          const updatedEditedArray = editedArray;
-          if (!isFieldsSame && updatedEditedArray.indexOf(property) === -1) updatedEditedArray.push(property);
-          if (isFieldsSame) updatedEditedArray.splice(updatedEditedArray.indexOf(property), 1);
-          if (Object.values(updatedEditedArray).length) {
-            this.setState({ isSaveDisabled: false, editedArray: updatedEditedArray });
-          } else {
-            this.setState({ isSaveDisabled: true, editedArray: updatedEditedArray });
-          }
-        }
-      });
-  }
+  handleFormChange = (e, property) => this.setState({ [property]: e.target.value });
 
   closeFileSizeModal = () => this.setState({ shouldShowFIleSizeModal: false });
 
-  handleUpdatePic = (photoFile, e, type) => {
-    const { editedArray } = this.state;
-    const updatedEditedArray = editedArray;
+  onCheckbox = async () => {
+    const { isSpaceProfileDefault } = this.state;
+    const { space } = this.props;
 
+    const value = !isSpaceProfileDefault;
+    await space.public.set('isSpaceProfileDefault', value);
+
+    this.setState({ isSpaceProfileDefault: value });
+  }
+
+  handleUpdatePic = (photoFile, e, type) => {
     if (photoFile.size >= 2500000) {
       e.target.value = null;
       this.setState({ shouldShowFIleSizeModal: true });
@@ -213,9 +179,6 @@ class EditProfile extends Component {
 
     const formData = new window.FormData();
     formData.append('path', photoFile);
-
-    if (updatedEditedArray.indexOf(type) === -1) updatedEditedArray.push(type);
-    this.setState({ isSaveDisabled: false });
 
     if (type === 'coverPhoto') {
       this.setState({
@@ -242,26 +205,11 @@ class EditProfile extends Component {
         shouldRemoveSpaceProfileImage: false,
       });
     }
-
-    this.setState({ editedArray: updatedEditedArray })
   }
 
-  handleRemovePicture = (type, isSpace) => {
-    const { editedArray } = this.state;
-    const updatedEditedArray = editedArray;
-    const profile = isSpace ? 'originalSpaceProfile' : 'originalProfile';
-    const field = isSpace ? type === 'spaceProfileImage' ? 'image' : 'coverPhoto' : type;
-
-    if (this.state[profile][field]) {
-      if (updatedEditedArray.indexOf(type) === -1) updatedEditedArray.push(type);
-    } else {
-      updatedEditedArray.splice(updatedEditedArray.indexOf(type), 1);
-    }
-
+  handleRemovePicture = (type) => {
     this.setState({
       [`shouldRemove${capitalizeFirstLetter(type)}`]: true,
-      editedArray: updatedEditedArray,
-      isSaveDisabled: !updatedEditedArray.length,
       [type]: undefined
     });
   }
@@ -270,7 +218,6 @@ class EditProfile extends Component {
     this.setState({
       [isSpace ? 'spaceProfileEmoji' : 'emoji']: emoji.native,
       isShowEmoji: false,
-      isSaveDisabled: false,
     });
   }
 
@@ -287,26 +234,20 @@ class EditProfile extends Component {
 
   handleSubmit = async (e) => {
     const {
-      shouldRemoveImage,
-      shouldRemoveCoverPhoto,
-      buffer,
-      coverBuffer,
-      isPicEdited,
-      isCoverPicEdited,
-      isSpaceCoverPicEdited,
-      description,
-      name,
-      emoji,
-      spaceProfileName,
-      spaceProfileDescription,
-      spaceProfileEmoji,
-      originalProfile,
       originalSpaceProfile,
+
       spaceCoverBuffer,
       spaceImageBuffer,
+      isPicEdited,
       isSpacePicEdited,
+      isCoverPicEdited,
+      isSpaceCoverPicEdited,
+      shouldRemoveImage,
+      shouldRemoveCoverPhoto,
       shouldRemoveSpaceProfileCoverPhoto,
       shouldRemoveSpaceProfileImage,
+      buffer,
+      coverBuffer,
     } = this.state;
 
     const {
@@ -321,21 +262,8 @@ class EditProfile extends Component {
 
     this.setState({ isSaveLoading: true });
 
-    const nameChanged = name !== originalProfile.name;
-    const descriptionChanged = description !== originalProfile.description;
-    const emojiChanged = emoji !== originalProfile.emoji;
-
-    const spaceNameChanged = spaceProfileName !== originalSpaceProfile.name;
-    const spaceDescriptionChanged = spaceProfileDescription !== originalSpaceProfile.description;
-    const spaceEmojiChanged = spaceProfileEmoji !== originalSpaceProfile.emoji;
-
-    // general profile fields
-    if (nameChanged) await box.public[name !== '' ? 'set' : 'remove']('name', name);
-    if (descriptionChanged) await box.public[description !== '' ? 'set' : 'remove']('description', description);
-    if (emojiChanged) await box.public[emoji !== '' ? 'set' : 'remove']('emoji', emoji);
-
-    if (shouldRemoveImage) await box.public.remove('image');
-    if (shouldRemoveCoverPhoto) await box.public.remove('coverPhoto');
+    await saveBasicTextFields(box, space, this.state, 'originalProfile');
+    await saveBasicTextFields(box, space, this.state, 'originalSpaceProfile');
 
     // save profile picture
     const fetch = isPicEdited && await this.fetchPic(buffer);
@@ -354,11 +282,6 @@ class EditProfile extends Component {
       this.setState({ coverPhoto: imageObject });
     }
 
-    // space profile fields
-    if (spaceNameChanged) await space.public[spaceProfileName !== '' ? 'set' : 'remove']('name', spaceProfileName);
-    if (spaceDescriptionChanged) await space.public[spaceProfileDescription !== '' ? 'set' : 'remove']('description', spaceProfileDescription);
-    if (spaceEmojiChanged) await space.public[spaceProfileEmoji !== '' ? 'set' : 'remove']('emoji', spaceProfileEmoji);
-
     const fetchSpaceImage = isSpacePicEdited && await this.fetchPic(spaceImageBuffer);
     const returnedSpaceImageData = isSpacePicEdited && await fetchSpaceImage.json();
     if (isSpacePicEdited) {
@@ -375,6 +298,8 @@ class EditProfile extends Component {
       this.setState({ spaceProfileCoverPhoto: imageObject });
     }
 
+    if (shouldRemoveImage) await box.public.remove('image');
+    if (shouldRemoveCoverPhoto) await box.public.remove('coverPhoto');
     if (shouldRemoveSpaceProfileImage) await space.public.remove('image');
     if (shouldRemoveSpaceProfileCoverPhoto) await space.public.remove('coverPhoto');
 
@@ -382,10 +307,15 @@ class EditProfile extends Component {
 
     this.setState({ isSaveLoading: false });
     // add function here to reroute after saving
-    // history.push(`/${currentUserAddr}/${routes.ACTIVITY}`);
   }
 
-  // save function that disables save after
+  handleHasUpdated = () => {
+    // check general basic profile
+    // check space basic profile
+    // check general images
+    // check space images
+    // check custom fields
+  }
 
   render() {
     const {
@@ -399,7 +329,6 @@ class EditProfile extends Component {
       name,
       description,
       emoji,
-      isSaveDisabled,
       shouldRemoveImage,
       shouldRemoveCoverPhoto,
       isSaveLoading,
@@ -410,7 +339,6 @@ class EditProfile extends Component {
       verifiedTwitter,
       verifiedGithub,
       verifiedEmail,
-      // isSpaceProfileDefault,
       isShowGeneralProfile,
       isSpaceProfileDefault,
 
@@ -423,8 +351,7 @@ class EditProfile extends Component {
       shouldRemoveSpaceProfileImage,
     } = this.state;
 
-    console.log('state', this.state);
-    console.log('props', this.props);
+    console.log(this.state);
 
     return (
       <div className="edit_page">
@@ -432,13 +359,6 @@ class EditProfile extends Component {
           when={!isSaveDisabled}
           message="Continue without saving changes to your profile?"
         /> */}
-
-        {isSaveLoading
-          && (
-            <div className="container">
-              <SVG src={Loading} alt="loading" />
-            </div>
-          )}
 
         <ReactCSSTransitionGroup
           transitionName="app_modals"
@@ -465,12 +385,12 @@ class EditProfile extends Component {
             verifiedTwitter={verifiedTwitter}
             verifiedGithub={verifiedGithub}
             verifiedEmail={verifiedEmail}
-            isSaveDisabled={isSaveDisabled}
             cancelFunc={cancelFunc}
             spaceProfileImage={spaceProfileImage}
             additionalFields={additionalFields}
             space={space}
             isSpaceProfileDefault={isSpaceProfileDefault}
+            isSaveLoading={isSaveLoading}
 
             handleRemovePicture={this.handleRemovePicture}
             coverUpload={this.coverUpload}
@@ -481,17 +401,19 @@ class EditProfile extends Component {
             handleSwitchProfile={this.handleSwitchProfile}
             handleShowEmojiPicker={this.handleShowEmojiPicker}
             handleSubmit={this.handleSubmit}
+            onCheckbox={this.onCheckbox}
 
             {...this.state}
           />
         ) : (
             <SpaceProfile
-              name={spaceProfileName}
-              description={spaceProfileDescription}
-              emoji={spaceProfileEmoji}
+              spaceProfileName={spaceProfileName}
+              spaceProfileDescription={spaceProfileDescription}
+              spaceProfileEmoji={spaceProfileEmoji}
+
               spaceProfileCoverPhoto={spaceProfileCoverPhoto}
               spaceProfileImage={spaceProfileImage}
-              
+
               shouldRemoveSpaceProfileCoverPhoto={shouldRemoveSpaceProfileCoverPhoto}
               shouldRemoveSpaceProfileImage={shouldRemoveSpaceProfileImage}
               image={image}
@@ -501,7 +423,7 @@ class EditProfile extends Component {
 
               currentUserAddr={currentUserAddr}
               isShowEmoji={isShowEmoji}
-              isSaveDisabled={isSaveDisabled}
+              isSaveLoading={isSaveLoading}
               cancelFunc={cancelFunc}
               additionalFields={additionalFields}
               handleRemovePicture={this.handleRemovePicture}
@@ -513,6 +435,7 @@ class EditProfile extends Component {
               handleSwitchProfile={this.handleSwitchProfile}
               handleShowEmojiPicker={this.handleShowEmojiPicker}
               handleSubmit={this.handleSubmit}
+              onCheckbox={this.onCheckbox}
 
               {...this.state}
             />
@@ -562,39 +485,3 @@ EditProfile.defaultProps = {
 };
 
 export default EditProfile
-
-    // const didChangeArray = [];
-    // editProfileFields.forEach((field) => {
-    //   if (field === 'coverPhoto' || field === 'image') return;
-    //   const didChange = this.state[field[0]] !== this.props.currentUser3BoxProfile[field[0]];
-    //   didChangeArray.push(didChange);
-    // });
-
-    // const updateArray = [];
-    // didChangeArray.map((fieldChanged, i) => {
-    //   if (!fieldChanged) return;
-
-    //   const field = editProfileFields[i][0];
-    //   const privOrPublic = editProfileFields[i][1];
-    //   const fieldState = this.state[field];
-    //   const fieldIsEmpty = fieldState === '';
-
-    //   let promise;
-    //   if (fieldIsEmpty) {
-    //     promise = box[privOrPublic].remove(field);
-    //   } else {
-    //     promise = box[privOrPublic].set(field, fieldState);
-    //   }
-
-    //   console.log('fieldchanged', field);
-    //   console.log('privOrPublic', privOrPublic);
-    //   console.log('fieldState', fieldState);
-    //   console.log('fieldIsEmpty', fieldIsEmpty);
-    //   console.log('promise', promise);
-    //   updateArray.push(promise);
-    // });
-
-    // console.log('updateArray', updateArray);
-    // const updatePromises = Promise.all(updateArray);
-    // const res = await updatePromises;
-    // console.log('res', res);

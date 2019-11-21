@@ -70,8 +70,6 @@
   width: 100%;
   height: fit-content;
   display: flex;
-  // flex-direction: column;
-  z-index: 1;
 }
 
 .edit_myProfile {
@@ -184,6 +182,7 @@
   flex-direction: column;
   padding: 0 40px;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .edit_profile_info--verified {
@@ -833,10 +832,6 @@
   color: $lighterFont;
 }
 
-// .edit_profile_fields_entry {
-//   margin-bottom: 20px;
-// }
-
 .loadingProfile {
   position: absolute;
   width: 100%;
@@ -866,6 +861,7 @@
 .options_wrapper {
   position: relative;
   width: fit-content;
+  z-index: 4;
 }
 
 .options_button {
@@ -1002,9 +998,9 @@ input:checked+.slider:before {
 }
 
 @media only screen and (max-width: 600px) {
-  .edit_profile_editCanvas_wrapper {
-    margin-right: 1em;
-  }
+  // .edit_profile_editCanvas_wrapper {
+  //   margin-right: 1em;
+  // }
 
   .modal_container {
     width: 100vw;
@@ -1028,8 +1024,7 @@ input:checked+.slider:before {
   }
 
   .edit_profile_address {
-    margin: 24px 0 0 0 !important;
-    width: 25%;
+    margin: 8px 0 0 0 !important;
   }
 
   .edit_profile_keyContainer {
@@ -1141,6 +1136,10 @@ input:checked+.slider:before {
     margin-bottom: 36px !important;
   }
 
+  .edit_profile_switch {
+    margin-right: 0;
+  }
+
   .edit_profile_categories {
     display: flex;
     flex-direction: column;
@@ -1156,6 +1155,14 @@ input:checked+.slider:before {
   .edit_profile_fields_entry {
     flex-direction: column;
     align-items: flex-start !important;
+  }
+
+  .edit_profile_fields_entry.nameAndEmoji {
+    flex-direction: row;
+  }
+
+  .edit_profile_fields_entry_name {
+    width: 80%;
   }
 
   .edit_page {
@@ -1188,7 +1195,6 @@ input:checked+.slider:before {
     }
 
     .edit_userPicture {
-      width: 100%;
       height: 100%;
       display: flex;
       margin-left: 0;
@@ -1245,7 +1251,14 @@ input:checked+.slider:before {
   }
 
   .edit_formControls {
-    margin-bottom: 20px;
+    margin: 20px 0;
   }
 
+  .edit_profile_keyContainer.spaceProfile {
+    margin: 30px 14px 0 14px;
+
+    .edit_profile_keyContainer_currentAddress {
+      margin: 2px 6px 0 0;
+    }
+  }
 }

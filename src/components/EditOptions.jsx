@@ -25,16 +25,6 @@ class EditOptions extends Component {
     }
   }
 
-  // onCheckbox = async () => {
-  //   const { isSpaceProfileDefault } = this.state;
-  //   const { space } = this.props;
-
-  //   const value = !isSpaceProfileDefault;
-  //   await space.public.set('isSpaceProfileDefault', value);
-
-  //   this.setState({ isSpaceProfileDefault: value });
-  // }
-
   handleShowOptionsMenu = () => {
     const { showOptions } = this.state;
     this.setState({ showOptions: !showOptions });

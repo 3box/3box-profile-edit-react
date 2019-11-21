@@ -31,7 +31,7 @@ class SpaceProfile extends Component {
       handleAddEmoji,
       handleFormChange,
       shouldRemoveSpaceProfileImage,
-      shouldRemoveUserPic,
+      shouldRemoveSpaceCoverPhoto,
       handleSwitchProfile,
       handleShowEmojiPicker,
       handleSubmit,
@@ -40,13 +40,14 @@ class SpaceProfile extends Component {
       isSpaceProfileDefault,
       onCheckbox,
       isSaveLoading,
+      isShowGeneralProfile,
     } = this.props;
 
-    const isCoverImage = !!spaceProfileCoverPhoto.length || (this.coverUpload && !!this.coverUpload.files.length);
-    const isImage = !!spaceProfileImage.length || (this.fileUpload && !!this.fileUpload.files.length);
+    const isCoverImage = !!spaceProfileCoverPhoto.length || (this.spaceCoverUpload && !!this.spaceCoverUpload.files.length);
+    const isImage = !!spaceProfileImage.length || (this.spaceImageUpload && !!this.spaceImageUpload.files.length);
 
     return (
-      <div className="edit">
+      <div className={`edit ${isShowGeneralProfile ? '' : 'show'}`}>
         <div className="edit_form">
 
           <div className="edit_profile_section">
@@ -54,36 +55,35 @@ class SpaceProfile extends Component {
               <div className="edit_profile_editCanvas_wrapper">
                 <button
                   className="removeCoverPic removeButton"
-                  onClick={() => handleRemovePicture('spaceProfileCoverPhoto', true)}
-                  disabled={isCoverImage ? false : true}
+                  onClick={() => handleRemovePicture('spaceCoverPhoto', true, true)}
                   text="remove"
                   type="button"
                 >
-                  &#10005;
-                  </button>
+                  {!shouldRemoveSpaceCoverPhoto ? <p>&#10005;</p> : <p className="undoArrow">&#8617;</p>}
+                </button>
               </div>
 
               <div className="coverWrapper">
-                <label htmlFor="coverInput" className="edit_profile_canvas_overlay">
+                <label htmlFor="spaceCoverInput" className="edit_profile_canvas_overlay">
                   <input
-                    id="coverInput"
+                    id="spaceCoverInput"
                     type="file"
                     name="coverPic"
                     className="light coverInput"
                     accept="image/*"
                     onChange={e => handleUpdatePic(e.target.files[0], e, 'spaceProfileCoverPhoto')}
-                    ref={ref => this.coverUpload = ref}
+                    ref={ref => this.spaceCoverUpload = ref}
                   />
                   <p>Change picture</p>
                 </label>
 
-                {(isCoverImage && !shouldRemoveSpaceProfileImage)
+                {(isCoverImage && !shouldRemoveSpaceCoverPhoto)
                   ? (
                     <img
                       className="coverPic"
                       alt="profile"
-                      src={(this.coverUpload && !!this.coverUpload.files.length)
-                        ? URL.createObjectURL(this.coverUpload.files[0])
+                      src={(this.spaceCoverUpload && !!this.spaceCoverUpload.files.length)
+                        ? URL.createObjectURL(this.spaceCoverUpload.files[0])
                         : `https://ipfs.infura.io/ipfs/${spaceProfileCoverPhoto[0].contentUrl['/']}`}
                     />
                   ) : (
@@ -96,28 +96,27 @@ class SpaceProfile extends Component {
           <div className="edit_profile_section">
             <div className="edit_profile_picAndAddress">
               <div className="edit_userPicture">
-                <label htmlFor="fileInput" className="chooseFile">
+                <label htmlFor="spaceProfileImage" className="chooseFile">
                   <input
-                    id="fileInput"
+                    id="spaceProfileImage"
                     type="file"
                     name="pic"
                     className="light fileInput"
                     accept="image/*"
                     onChange={e => handleUpdatePic(e.target.files[0], e, 'spaceProfileImage')}
-                    ref={ref => this.fileUpload = ref}
+                    ref={ref => this.spaceImageUpload = ref}
                   />
 
                   <button
                     className="removeButton removePic"
-                    onClick={() => handleRemovePicture('spaceProfileImage', true)}
-                    disabled={isImage ? false : true}
+                    onClick={() => handleRemovePicture('spaceProfileImage', false, true)}
                     text="remove"
                     type="button"
                   >
-                    &#10005;
+                    {!shouldRemoveSpaceProfileImage ? <p>&#10005;</p> : <p className="undoArrow">&#8617;</p>}
                   </button>
 
-                  {(isImage && !shouldRemoveUserPic)
+                  {(isImage && !shouldRemoveSpaceProfileImage)
                     ? (
                       <div className="profPic_div">
                         <div className="profPic_div_overlay">
@@ -125,8 +124,8 @@ class SpaceProfile extends Component {
                         </div>
                         <img
                           className="profPic clearProfPic"
-                          src={(this.fileUpload && this.fileUpload.files && this.fileUpload.files[0])
-                            ? URL.createObjectURL(this.fileUpload.files[0])
+                          src={(this.spaceImageUpload && this.spaceImageUpload.files && this.spaceImageUpload.files[0])
+                            ? URL.createObjectURL(this.spaceImageUpload.files[0])
                             : `https://ipfs.infura.io/ipfs/${spaceProfileImage[0].contentUrl['/']}`}
                           alt="profile"
                         />
@@ -314,6 +313,8 @@ SpaceProfile.propTypes = {
   isSpaceProfileDefault: PropTypes.bool,
   shouldRemoveSpaceProfileImage: PropTypes.bool,
   shouldRemoveUserPic: PropTypes.bool,
+  shouldRemoveSpaceCoverPhoto: PropTypes.bool,
+  isShowGeneralProfile: PropTypes.bool,
   isSaveLoading: PropTypes.bool,
   cancelFunc: PropTypes.func,
   handleRemovePicture: PropTypes.func.isRequired,
@@ -348,6 +349,7 @@ SpaceProfile.defaultProps = {
   isFetchingThreeBox: false,
   copySuccessful: false,
   isSpaceProfileDefault: false,
+  shouldRemoveSpaceCoverPhoto: false,
 };
 
 export default SpaceProfile;

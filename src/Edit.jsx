@@ -50,7 +50,7 @@ class EditProfile extends Component {
       shouldRemoveImage: false,
       shouldRemoveCoverPhoto: false,
       shouldRemoveSpaceProfileImage: false,
-      shouldRemoveSpaceProfileCoverPhoto: false,
+      shouldRemoveSpaceCoverPhoto: false,
       shouldShowFIleSizeModal: false,
 
       coverPhoto: [],
@@ -196,7 +196,7 @@ class EditProfile extends Component {
       this.setState({
         isSpaceCoverPicEdited: true,
         spaceCoverBuffer: formData,
-        shouldRemoveSpaceProfileCoverPhoto: false,
+        shouldRemoveSpaceCoverPhoto: false,
       });
     } else if (type === 'spaceProfileImage') {
       this.setState({
@@ -207,11 +207,22 @@ class EditProfile extends Component {
     }
   }
 
-  handleRemovePicture = (type) => {
-    this.setState({
-      [`shouldRemove${capitalizeFirstLetter(type)}`]: true,
-      [type]: undefined
-    });
+  handleRemovePicture = (type, isCover, fromSpace) => {
+    const removeKey = `shouldRemove${capitalizeFirstLetter(type)}`;
+    if (this.state[removeKey]) {
+      const originalValue = fromSpace ?
+        this.state.originalSpaceProfile[isCover ? 'coverPhoto' : 'image']
+        : this.state.originalProfile[isCover ? 'coverPhoto' : 'image'];
+      this.setState({
+        [removeKey]: false,
+        [type]: originalValue
+      });
+    } else {
+      this.setState({
+        [removeKey]: true,
+        [type]: undefined
+      });
+    }
   }
 
   handleAddEmoji = (emoji, isSpace) => {
@@ -244,7 +255,7 @@ class EditProfile extends Component {
       isSpaceCoverPicEdited,
       shouldRemoveImage,
       shouldRemoveCoverPhoto,
-      shouldRemoveSpaceProfileCoverPhoto,
+      shouldRemoveSpaceCoverPhoto,
       shouldRemoveSpaceProfileImage,
       buffer,
       coverBuffer,
@@ -301,7 +312,7 @@ class EditProfile extends Component {
     if (shouldRemoveImage) await box.public.remove('image');
     if (shouldRemoveCoverPhoto) await box.public.remove('coverPhoto');
     if (shouldRemoveSpaceProfileImage) await space.public.remove('image');
-    if (shouldRemoveSpaceProfileCoverPhoto) await space.public.remove('coverPhoto');
+    if (shouldRemoveSpaceCoverPhoto) await space.public.remove('coverPhoto');
 
     await saveCustomFields(space, additionalFields, this.state, originalSpaceProfile);
 
@@ -347,11 +358,9 @@ class EditProfile extends Component {
       spaceProfileEmoji,
       spaceProfileCoverPhoto,
       spaceProfileImage,
-      shouldRemoveSpaceProfileCoverPhoto,
+      shouldRemoveSpaceCoverPhoto,
       shouldRemoveSpaceProfileImage,
     } = this.state;
-
-    console.log(this.state);
 
     return (
       <div className="edit_page">
@@ -371,75 +380,75 @@ class EditProfile extends Component {
           {shouldShowFIleSizeModal && <ModalBackground />}
         </ReactCSSTransitionGroup>
 
-        {isShowGeneralProfile ? (
-          <GeneralProfile
-            coverPhoto={coverPhoto}
-            image={image}
-            emoji={emoji}
-            name={name}
-            shouldRemoveImage={shouldRemoveImage}
-            shouldRemoveCoverPhoto={shouldRemoveCoverPhoto}
-            description={description}
-            currentUserAddr={currentUserAddr}
-            isShowEmoji={isShowEmoji}
-            verifiedTwitter={verifiedTwitter}
-            verifiedGithub={verifiedGithub}
-            verifiedEmail={verifiedEmail}
-            cancelFunc={cancelFunc}
-            spaceProfileImage={spaceProfileImage}
-            additionalFields={additionalFields}
-            space={space}
-            isSpaceProfileDefault={isSpaceProfileDefault}
-            isSaveLoading={isSaveLoading}
+        <GeneralProfile
+          isShowGeneralProfile={isShowGeneralProfile}
+          coverPhoto={coverPhoto}
+          image={image}
+          emoji={emoji}
+          name={name}
+          shouldRemoveImage={shouldRemoveImage}
+          shouldRemoveCoverPhoto={shouldRemoveCoverPhoto}
+          description={description}
+          currentUserAddr={currentUserAddr}
+          isShowEmoji={isShowEmoji}
+          verifiedTwitter={verifiedTwitter}
+          verifiedGithub={verifiedGithub}
+          verifiedEmail={verifiedEmail}
+          cancelFunc={cancelFunc}
+          spaceProfileImage={spaceProfileImage}
+          additionalFields={additionalFields}
+          space={space}
+          isSpaceProfileDefault={isSpaceProfileDefault}
+          isSaveLoading={isSaveLoading}
 
-            handleRemovePicture={this.handleRemovePicture}
-            coverUpload={this.coverUpload}
-            handleUpdatePic={this.handleUpdatePic}
-            fileUpload={this.fileUpload}
-            handleFormChange={this.handleFormChange}
-            handleAddEmoji={this.handleAddEmoji}
-            handleSwitchProfile={this.handleSwitchProfile}
-            handleShowEmojiPicker={this.handleShowEmojiPicker}
-            handleSubmit={this.handleSubmit}
-            onCheckbox={this.onCheckbox}
+          handleRemovePicture={this.handleRemovePicture}
+          coverUpload={this.coverUpload}
+          handleUpdatePic={this.handleUpdatePic}
+          fileUpload={this.fileUpload}
+          handleFormChange={this.handleFormChange}
+          handleAddEmoji={this.handleAddEmoji}
+          handleSwitchProfile={this.handleSwitchProfile}
+          handleShowEmojiPicker={this.handleShowEmojiPicker}
+          handleSubmit={this.handleSubmit}
+          onCheckbox={this.onCheckbox}
 
-            {...this.state}
-          />
-        ) : (
-            <SpaceProfile
-              spaceProfileName={spaceProfileName}
-              spaceProfileDescription={spaceProfileDescription}
-              spaceProfileEmoji={spaceProfileEmoji}
+          {...this.state}
+        />
+        <SpaceProfile
+          isShowGeneralProfile={isShowGeneralProfile}
 
-              spaceProfileCoverPhoto={spaceProfileCoverPhoto}
-              spaceProfileImage={spaceProfileImage}
+          spaceProfileName={spaceProfileName}
+          spaceProfileDescription={spaceProfileDescription}
+          spaceProfileEmoji={spaceProfileEmoji}
 
-              shouldRemoveSpaceProfileCoverPhoto={shouldRemoveSpaceProfileCoverPhoto}
-              shouldRemoveSpaceProfileImage={shouldRemoveSpaceProfileImage}
-              image={image}
+          spaceProfileCoverPhoto={spaceProfileCoverPhoto}
+          spaceProfileImage={spaceProfileImage}
 
-              space={space}
-              isSpaceProfileDefault={isSpaceProfileDefault}
+          shouldRemoveSpaceCoverPhoto={shouldRemoveSpaceCoverPhoto}
+          shouldRemoveSpaceProfileImage={shouldRemoveSpaceProfileImage}
+          image={image}
 
-              currentUserAddr={currentUserAddr}
-              isShowEmoji={isShowEmoji}
-              isSaveLoading={isSaveLoading}
-              cancelFunc={cancelFunc}
-              additionalFields={additionalFields}
-              handleRemovePicture={this.handleRemovePicture}
-              coverUpload={this.coverUpload}
-              handleUpdatePic={this.handleUpdatePic}
-              fileUpload={this.fileUpload}
-              handleFormChange={this.handleFormChange}
-              handleAddEmoji={this.handleAddEmoji}
-              handleSwitchProfile={this.handleSwitchProfile}
-              handleShowEmojiPicker={this.handleShowEmojiPicker}
-              handleSubmit={this.handleSubmit}
-              onCheckbox={this.onCheckbox}
+          space={space}
+          isSpaceProfileDefault={isSpaceProfileDefault}
 
-              {...this.state}
-            />
-          )}
+          currentUserAddr={currentUserAddr}
+          isShowEmoji={isShowEmoji}
+          isSaveLoading={isSaveLoading}
+          cancelFunc={cancelFunc}
+          additionalFields={additionalFields}
+          handleRemovePicture={this.handleRemovePicture}
+          coverUpload={this.coverUpload}
+          handleUpdatePic={this.handleUpdatePic}
+          fileUpload={this.fileUpload}
+          handleFormChange={this.handleFormChange}
+          handleAddEmoji={this.handleAddEmoji}
+          handleSwitchProfile={this.handleSwitchProfile}
+          handleShowEmojiPicker={this.handleShowEmojiPicker}
+          handleSubmit={this.handleSubmit}
+          onCheckbox={this.onCheckbox}
+
+          {...this.state}
+        />
       </div >
     );
   }

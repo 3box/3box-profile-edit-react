@@ -45,13 +45,14 @@ class GeneralProfile extends Component {
       isSpaceProfileDefault,
       onCheckbox,
       isSaveLoading,
+      isShowGeneralProfile,
     } = this.props;
 
     const isCoverImage = !!coverPhoto.length || (this.coverUpload && !!this.coverUpload.files.length);
     const isImage = !!image.length || (this.fileUpload && !!this.fileUpload.files.length);
 
     return (
-      <div className="edit">
+      <div className={`edit ${isShowGeneralProfile ? 'show' : ''}`}>
         <div className="edit_form">
 
           <div className="edit_profile_section">
@@ -59,12 +60,12 @@ class GeneralProfile extends Component {
               <div className="edit_profile_editCanvas_wrapper">
                 <button
                   className="removeCoverPic removeButton"
-                  onClick={() => handleRemovePicture('coverPhoto')}
-                  disabled={isCoverImage ? false : true}
+                  onClick={() => handleRemovePicture('coverPhoto', true)}
                   text="remove"
                   type="button"
                 >
-                  &#10005;
+                  {!shouldRemoveCoverPhoto ? <p>&#10005;</p> : <p className="undoArrow">&#8617;</p>}
+
                 </button>
               </div>
 
@@ -114,12 +115,11 @@ class GeneralProfile extends Component {
 
                   <button
                     className="removeButton removePic"
-                    onClick={() => handleRemovePicture('image')}
-                    disabled={isImage ? false : true}
+                    onClick={() => handleRemovePicture('image', false)}
                     text="remove"
                     type="button"
                   >
-                    &#10005;
+                    {!shouldRemoveImage ? <p>&#10005;</p> : <p className="undoArrow">&#8617;</p>}
                   </button>
 
                   {(isImage && !shouldRemoveImage)
@@ -374,6 +374,7 @@ GeneralProfile.propTypes = {
   shouldRemoveCoverPhoto: PropTypes.bool,
   shouldRemoveImage: PropTypes.bool,
   isSpaceProfileDefault: PropTypes.bool,
+  isShowGeneralProfile: PropTypes.bool,
   isSaveLoading: PropTypes.bool,
   cancelFunc: PropTypes.func,
   handleRemovePicture: PropTypes.func.isRequired,

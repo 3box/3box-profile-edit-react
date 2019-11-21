@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import SVG from 'react-inlinesvg';
 
+import FormControls from './FormControls';
 import ProfileField from './ProfileField';
 import InfoIcon from '../assets/InfoIcon.svg';
-import Loading from '../assets/Loading.svg';
 
 export const CustomFields = (props) => {
   const {
@@ -68,53 +68,6 @@ CustomFields.propTypes = {
 };
 
 CustomFields.defaultProps = {
-  currentUserAddr: '',
-  isSaveLoading: false,
-};
-
-export const FormControls = (props) => {
-  const {
-    handleSubmit,
-    cancelFunc,
-    currentUserAddr,
-    isSaveLoading,
-  } = props;
-
-  return (
-    <div className="edit_formControls">
-      <div className="edit_formControls_content">
-        {isSaveLoading && <SVG src={Loading} alt="loading" className="edit_load" />}
-
-        <button
-          type="submit"
-          className="edit_formControls_content_save"
-          onClick={(e) => handleSubmit(e)}
-        >
-          Save
-        </button>
-
-
-        {cancelFunc && (
-          <button
-            className="edit_cancel"
-            onClick={() => cancelFunc(currentUserAddr)}
-          >
-            Cancel
-          </button>
-        )}
-      </div>
-    </div >
-  )
-};
-
-FormControls.propTypes = {
-  currentUserAddr: PropTypes.string,
-  cancelFunc: PropTypes.func,
-  handleSubmit: PropTypes.func,
-  isSaveLoading: PropTypes.bool,
-};
-
-FormControls.defaultProps = {
   currentUserAddr: '',
   isSaveLoading: false,
 };

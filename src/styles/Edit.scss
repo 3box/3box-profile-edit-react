@@ -118,6 +118,7 @@
   border-radius: 50%;
   background-color: $lighterDarkBG;
   margin-right: 8px;
+  margin-left: 8px;
 }
 
 .edit_profile_switch_text {
@@ -202,7 +203,7 @@
   border: none !important;
 }
 
-.edit_profile_address {
+.edit_formControls_address {
   height: fit-content;
   display: flex;
   align-items: center;
@@ -212,6 +213,8 @@
   font-size: 12px;
   margin: 0;
   min-height: 15px;
+  padding: 40px;
+  cursor: pointer;
 }
 
 .edit_userPicture {
@@ -577,7 +580,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 4;
 }
 
 .privateInput {
@@ -674,7 +677,7 @@
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
 }
 
 .edit_profile_spaceProfile {
@@ -877,6 +880,7 @@
   position: relative;
   width: fit-content;
   z-index: 4;
+  padding: 20px 40px;
 }
 
 .options_button {
@@ -899,7 +903,14 @@
 
 .options_button_icon {
   opacity: .3;
-  width: 16px;
+  width: 20px;
+  margin-right: 6px;
+}
+
+.default_button_icon {
+  opacity: .6;
+  width: 20px;
+  margin-left: 30px;
 }
 
 .options_menu.show {
@@ -909,18 +920,29 @@
   transition-delay: 0s, 0s, 0.3s;
 }
 
+.edit_formControls_address_icon {
+  width: 14px;
+  margin-left: 6px;
+}
+
+.edit_formControls_address_copy {
+  opacity: .6;
+  width: 14px;
+  margin-left: 12px;
+}
+
 .options_menu {
   position: absolute;
   width: 210px;
-  height: 100px;
+  height: fit-content;
   background-color: white;
-  padding: 12px 16px;
+  padding: 12px 0 16px 0;
   box-sizing: border-box;
 
   transition: transform ease 0.9s, opacity ease 0.1s;
   transform: translateY(-4px);
-  top: 24px;
-  right: 0;
+  top: 44px;
+  right: 40px;
   text-align: left;
   border-radius: 5px;
   border: 1px solid #E4E4E4;
@@ -932,26 +954,34 @@
   transition: all 0.3s ease-in-out 0s,
     visibility 0s linear 0.3s,
     z-index 0s linear 0.01s;
-  z-index: 1;
+  z-index: 5;
 
   .options_menu_header {
-    margin: 0 0 20px 0;
+    margin: 0 0 10px 16px;
     font-size: 15px;
   }
+}
 
-  .options_menu_section_option {
-    font-size: 13px;
-    color: $lighterFont;
-    margin: 0 16px 0 0;
+.options_menu_section_option {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 13px;
+  color: $lighterFont;
+  margin: 0 0 0 0;
+  padding: 0 12px;
+  width: 100%;
+  height: 50px;
+  cursor: pointer;
+  box-sizing: border-box;
+
+  &:hover {
+    background-color: $backgroundGreyDark !important;
   }
 }
 
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
+.options_menu_section_option.selected {
+  background-color: $backgroundHue;
 }
 
 .options_menu_section {
@@ -960,57 +990,15 @@
   align-items: center;
 }
 
-/* The switch - the box around the slider */
-.switch {
-  position: relative;
-  display: inline-block;
-  min-width: 50px;
-  height: 25px;
+.options_menu_section_form {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
 }
 
-/* Hide default HTML checkbox */
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* The slider */
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
-  opacity: .6;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 19px;
-  width: 19px;
-  left: 4px;
-  bottom: 3px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-input:checked+.slider {
-  background-color: #2196F3;
-}
-
-input:focus+.slider {
-  box-shadow: 0 0 1px #2196F3;
-}
-
-input:checked+.slider:before {
-  transform: translateX(23px);
-}
 
 @media only screen and (max-width: 600px) {
   // .edit_profile_editCanvas_wrapper {
@@ -1038,7 +1026,7 @@ input:checked+.slider:before {
     align-items: center;
   }
 
-  .edit_profile_address {
+  .edit_formControls_address {
     margin: 8px 0 0 0 !important;
   }
 

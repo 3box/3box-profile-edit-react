@@ -25,7 +25,7 @@ const ProfileField = (props) => {
 
 ProfileField.propTypes = {
   handleFormChange: PropTypes.func,
-  customField: PropTypes.string,
+  customField: PropTypes.object,
   customFieldValue: PropTypes.string,
 };
 

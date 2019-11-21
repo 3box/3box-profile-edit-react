@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import SVG from 'react-inlinesvg';
+import makeBlockie from 'ethereum-blockies-base64';
 
 import Options from '../assets/Options.svg';
+import Check from '../assets/Check.svg';
 
 class EditOptions extends Component {
   constructor(props) {
@@ -25,21 +27,25 @@ class EditOptions extends Component {
     }
   }
 
-  handleShowOptionsMenu = () => {
-    const { showOptions } = this.state;
-    this.setState({ showOptions: !showOptions });
-  }
-
   render() {
-    const { showOptions, isSpaceProfileDefault } = this.state;
-    const { fromSpaceProfile, onCheckbox } = this.props;
-    const valueToShow = fromSpaceProfile ? isSpaceProfileDefault : !isSpaceProfileDefault;
+    const {
+      isSpaceProfileDefault
+    } = this.state;
+
+    const {
+      handleSelectDefaultProfile,
+      spaceProfileImage,
+      image,
+      currentUserAddr,
+      showOptions,
+      handleShowOptionsMenu,
+    } = this.props;
 
     return (
       <div className="options_wrapper">
         <button
-          onClick={this.handleShowOptionsMenu}
-          onKeyPress={this.handleShowOptionsMenu}
+          onClick={handleShowOptionsMenu}
+          onKeyPress={handleShowOptionsMenu}
           className="options_button"
           type="button"
         >
@@ -52,28 +58,65 @@ class EditOptions extends Component {
 
         <div className={`options_menu ${showOptions ? 'show' : ''}`}>
           <h5 className="options_menu_header">
-            Settings
+            Set default profile
           </h5>
 
           <div className="options_menu_section">
-            <p className="options_menu_section_option">{`${fromSpaceProfile ? 'Space' : 'General'} profile as default`}</p>
-            <label className="switch" htmlFor="enableWall">
-              <input
-                type="checkbox"
-                id="enableWall"
-                checked={valueToShow}
-                onChange={onCheckbox}
-              />
-              <span className="slider round" />
-            </label>
+            <div className="options_menu_section_form">
+              <div
+                className={`options_menu_section_option ${isSpaceProfileDefault ? '' : 'selected'}`}
+                onClick={handleSelectDefaultProfile}
+              >
+                <img
+                  src={image.length ? `https://ipfs.infura.io/ipfs/${image[0].contentUrl['/']}` : makeBlockie(currentUserAddr)}
+                  className="edit_profile_switch_pic"
+                  alt="Other profile"
+                />
+
+                <p>
+                  3Box Profile
+                </p>
+
+                {!isSpaceProfileDefault ? (
+                  <SVG
+                    src={Check}
+                    alt="options"
+                    className="default_button_icon"
+                  />
+                ) : <div className="default_button_icon" />}
+              </div>
+
+              <div
+                className={`options_menu_section_option ${isSpaceProfileDefault ? 'selected' : ''}`}
+                onClick={handleSelectDefaultProfile}
+              >
+                <img
+                  src={spaceProfileImage.length ? `https://ipfs.infura.io/ipfs/${spaceProfileImage[0].contentUrl['/']}` : makeBlockie(currentUserAddr)}
+                  className="edit_profile_switch_pic"
+                  alt="Other profile"
+                />
+
+                <p>
+                  App Profile
+                </p>
+
+                {isSpaceProfileDefault ? (
+                  <SVG
+                    src={Check}
+                    alt="options"
+                    className="default_button_icon"
+                  />
+                ) : <div className="default_button_icon" />}
+              </div>
+            </div>
           </div>
         </div>
 
         {showOptions && (
           <div
             className="onClickOutside"
-            onClick={this.handleShowOptionsMenu}
-            onKeyPress={this.handleShowOptionsMenu}
+            onClick={handleShowOptionsMenu}
+            onKeyPress={handleShowOptionsMenu}
             tabIndex={0}
             role="button"
           />
@@ -84,12 +127,15 @@ class EditOptions extends Component {
 }
 
 EditOptions.propTypes = {
-  onCheckbox: PropTypes.func.isRequired,
-  fromSpaceProfile: PropTypes.bool,
+  handleSelectDefaultProfile: PropTypes.func.isRequired,
+  image: PropTypes.array,
+  spaceProfileImage: PropTypes.array,
+  currentUserAddr: PropTypes.string,
 };
 
 EditOptions.defaultProps = {
-  fromSpaceProfile: false,
+  image: [],
+  spaceProfileImage: [],
 };
 
 export default EditOptions;

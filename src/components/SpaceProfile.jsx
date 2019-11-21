@@ -7,7 +7,7 @@ import SVG from 'react-inlinesvg';
 import ProfileField from './ProfileField';
 import EditOptions from './EditOptions';
 import InfoIcon from '../assets/InfoIcon.svg';
-import { FormControls } from './ProfileComponents';
+import FormControls from './FormControls';
 
 class SpaceProfile extends Component {
   constructor(props) {
@@ -32,15 +32,16 @@ class SpaceProfile extends Component {
       handleFormChange,
       shouldRemoveSpaceProfileImage,
       shouldRemoveSpaceCoverPhoto,
-      handleSwitchProfile,
       handleShowEmojiPicker,
       handleSubmit,
       additionalFields,
       space,
       isSpaceProfileDefault,
-      onCheckbox,
+      handleSelectDefaultProfile,
       isSaveLoading,
       isShowGeneralProfile,
+      showOptions,
+      handleShowOptionsMenu,
     } = this.props;
 
     const isCoverImage = !!spaceProfileCoverPhoto.length || (this.spaceCoverUpload && !!this.spaceCoverUpload.files.length);
@@ -148,14 +149,16 @@ class SpaceProfile extends Component {
 
               </div>
 
-              <div
-                className="edit_profile_switch"
-                onClick={handleSwitchProfile}
-              >
-                {image.length ? <img src={`https://ipfs.infura.io/ipfs/${image[0].contentUrl['/']}`} className="edit_profile_switch_pic" alt="Other profile" />
-                  : <div className="edit_profile_switch_pic" />}
-                <p className="edit_profile_switch_text">SWITCH PROFILE</p>
-              </div>
+              <EditOptions
+                space={space}
+                isSpaceProfileDefault={isSpaceProfileDefault}
+                handleSelectDefaultProfile={handleSelectDefaultProfile}
+                image={image}
+                spaceProfileImage={spaceProfileImage}
+                currentUserAddr={currentUserAddr}
+                showOptions={showOptions}
+                handleShowOptionsMenu={handleShowOptionsMenu}
+              />
             </div>
           </div>
 
@@ -166,36 +169,25 @@ class SpaceProfile extends Component {
                 <div className="edit_profile_keyContainer currentAddress">
                   <div className="edit_profile_keyContainer_currentAddressWrapper">
                     <p className="edit_profile_keyContainer_currentAddress">
-                      SPACE PROFILE
+                      APP PROFILE
                     </p>
 
                     <div className="edit_profile_verifiedFields_info infoIcon">
                       <SVG src={InfoIcon} className="edit_profile_verifiedFields_icons" alt="Info" />
                       <div className="edit_profile_verifiedFields_hover">
                         <span className="edit_profile_verifiedFields_info_text">
-                          Data here is saved to the space this current dApp has access to
-                            </span>
+                          These fields are saved to your application profile
+                        </span>
                       </div>
                     </div>
                   </div>
-
-                  <EditOptions
-                    space={space}
-                    isSpaceProfileDefault={isSpaceProfileDefault}
-                    onCheckbox={onCheckbox}
-                    fromSpaceProfile
-                  />
                 </div>
-
-                <p title={currentUserAddr} className="edit_profile_address">
-                  {currentUserAddr}
-                </p>
               </div>
 
               <div className="edit_profile_fields_entry nameAndEmoji">
                 <div className="edit_profile_fields_entry_name">
                   <div className="edit_profile_keyContainer">
-                    <p>NAME</p>
+                    <p>Name</p>
                   </div>
                   <input
                     name="name"
@@ -208,7 +200,7 @@ class SpaceProfile extends Component {
 
                 <div className="edit_profile_fields_entry_emoji">
                   <div className="edit_profile_keyContainer">
-                    <p className="edit_profile_key">EMOJI</p>
+                    <p className="edit_profile_key">Emoji</p>
                   </div>
 
                   {isShowEmoji
@@ -248,7 +240,7 @@ class SpaceProfile extends Component {
 
               <div className="edit_profile_fields_entry">
                 <div className="edit_profile_keyContainer">
-                  <p className="edit_profile_key">DESCRIPTION</p>
+                  <p className="edit_profile_key">Description</p>
                 </div>
                 <textarea
                   name="description"
@@ -321,9 +313,8 @@ SpaceProfile.propTypes = {
   handleUpdatePic: PropTypes.func.isRequired,
   handleAddEmoji: PropTypes.func.isRequired,
   handleFormChange: PropTypes.func.isRequired,
-  handleSwitchProfile: PropTypes.func.isRequired,
   handleShowEmojiPicker: PropTypes.func.isRequired,
-  onCheckbox: PropTypes.func.isRequired,
+  handleSelectDefaultProfile: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
 };
 

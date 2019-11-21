@@ -4,7 +4,8 @@ import makeBlockie from 'ethereum-blockies-base64';
 import { Picker } from 'emoji-mart';
 import SVG from 'react-inlinesvg';
 
-import { CustomFields, FormControls } from './ProfileComponents';
+import { CustomFields } from './ProfileComponents';
+import FormControls from './FormControls';
 import EditOptions from './EditOptions';
 import TwitterIcon from '../assets/TwitterIcon.svg';
 import GithubIcon from '../assets/GithubIcon.svg';
@@ -36,16 +37,17 @@ class GeneralProfile extends Component {
       handleFormChange,
       shouldRemoveCoverPhoto,
       shouldRemoveImage,
-      handleSwitchProfile,
       handleShowEmojiPicker,
       spaceProfileImage,
       handleSubmit,
       additionalFields,
       space,
       isSpaceProfileDefault,
-      onCheckbox,
+      handleSelectDefaultProfile,
       isSaveLoading,
       isShowGeneralProfile,
+      showOptions,
+      handleShowOptionsMenu,
     } = this.props;
 
     const isCoverImage = !!coverPhoto.length || (this.coverUpload && !!this.coverUpload.files.length);
@@ -154,19 +156,16 @@ class GeneralProfile extends Component {
 
               </div>
 
-              <div
-                className="edit_profile_switch"
-                onClick={handleSwitchProfile}
-              >
-                {spaceProfileImage ? (
-                  <img
-                    src={`https://ipfs.infura.io/ipfs/${spaceProfileImage[0].contentUrl['/']}`}
-                    className="edit_profile_switch_pic"
-                    alt="Other profile"
-                  />
-                ) : <div className="edit_profile_switch_pic" />}
-                <p className="edit_profile_switch_text">SWITCH PROFILE</p>
-              </div>
+              <EditOptions
+                space={space}
+                isSpaceProfileDefault={isSpaceProfileDefault}
+                handleSelectDefaultProfile={handleSelectDefaultProfile}
+                spaceProfileImage={spaceProfileImage}
+                image={image}
+                showOptions={showOptions}
+                handleShowOptionsMenu={handleShowOptionsMenu}
+                currentUserAddr={currentUserAddr}
+              />
             </div>
 
           </div>
@@ -178,36 +177,27 @@ class GeneralProfile extends Component {
                 <div className="edit_profile_keyContainer currentAddress">
                   <div className="edit_profile_keyContainer_currentAddressWrapper">
                     <p className="edit_profile_keyContainer_currentAddress">
-                      GENERAL PROFILE
+                      3BOX PROFILE
                       </p>
 
                     <div className="edit_profile_verifiedFields_info infoIcon">
                       <SVG src={InfoIcon} className="edit_profile_verifiedFields_icons" alt="Info" />
                       <div className="edit_profile_verifiedFields_hover">
                         <span className="edit_profile_verifiedFields_info_text">
-                          Data here is accessible to all dApps using your general 3Box profile
+                          These fields are saved to your 3Box profile
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <EditOptions
-                    space={space}
-                    isSpaceProfileDefault={isSpaceProfileDefault}
-                    onCheckbox={onCheckbox}
-                  />
                 </div>
-
-                <p title={currentUserAddr} className="edit_profile_address">
-                  {currentUserAddr}
-                </p>
               </div>
 
               <div className="edit_profile_fields_entry nameAndEmoji">
                 <div className="edit_profile_fields_entry_name">
                   <div className="edit_profile_keyContainer">
                     <p className="edit_profile_keyContainer_currentAddress">
-                      NAME
+                      Name
                     </p>
                   </div>
                   <input
@@ -222,8 +212,8 @@ class GeneralProfile extends Component {
                 <div className="edit_profile_fields_entry_emoji">
                   <div className="edit_profile_keyContainer">
                     <p className="edit_profile_keyContainer_currentAddress">
-                      EMOJI
-                        </p>
+                      Emoji
+                    </p>
                   </div>
 
                   {isShowEmoji
@@ -311,7 +301,7 @@ class GeneralProfile extends Component {
 
               <div className="edit_profile_fields_entry">
                 <div className="edit_profile_keyContainer">
-                  <p className="edit_profile_key">DESCRIPTION</p>
+                  <p className="edit_profile_key">Description</p>
                 </div>
                 <textarea
                   name="description"
@@ -381,9 +371,8 @@ GeneralProfile.propTypes = {
   handleUpdatePic: PropTypes.func.isRequired,
   handleAddEmoji: PropTypes.func.isRequired,
   handleFormChange: PropTypes.func.isRequired,
-  handleSwitchProfile: PropTypes.func.isRequired,
   handleShowEmojiPicker: PropTypes.func.isRequired,
-  onCheckbox: PropTypes.func.isRequired,
+  handleSelectDefaultProfile: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
 };
 
@@ -405,6 +394,7 @@ GeneralProfile.defaultProps = {
   image: [],
   coverPhoto: [],
   additionalFields: [],
+  spaceProfileImage: [],
   isFetchingThreeBox: false,
   copySuccessful: false,
   isSpaceProfileDefault: false,

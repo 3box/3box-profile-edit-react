@@ -1,12 +1,9 @@
-export const copyToClipBoard = (type, message) => async (dispatch) => {
+export const copyToClipBoard = (addr) => {
   try {
+    console.log('clicked')
     const textArea = document.createElement('textarea');
 
-    if (type === 'did') {
-      textArea.value = message;
-    } else if (type === 'profile') {
-      textArea.value = `https://www.3box.io/${store.getState().userState.currentAddress}`;
-    }
+    textArea.value = addr;
 
     document.body.appendChild(textArea);
     textArea.focus({
@@ -15,18 +12,18 @@ export const copyToClipBoard = (type, message) => async (dispatch) => {
     textArea.select();
     document.execCommand('copy');
 
-    setTimeout(() => {
-      dispatch({
-        type: 'UI_COPY_SUCCESSFUL',
-        copySuccessful: true,
-      });
-    }, 1);
-    setTimeout(() => {
-      dispatch({
-        type: 'UI_COPY_SUCCESSFUL',
-        copySuccessful: false,
-      });
-    }, 2000);
+    // setTimeout(() => {
+    //   dispatch({
+    //     type: 'UI_COPY_SUCCESSFUL',
+    //     copySuccessful: true,
+    //   });
+    // }, 1);
+    // setTimeout(() => {
+    //   dispatch({
+    //     type: 'UI_COPY_SUCCESSFUL',
+    //     copySuccessful: false,
+    //   });
+    // }, 2000);
 
     document.body.removeChild(textArea);
   } catch (err) {
@@ -60,4 +57,9 @@ export const formatIpfsImageObject = (returnedData) => {
   }];
 
   return format;
+};
+
+export const shortenEthAddr = (str) => {
+  const shortenStr = str && `${str.substring(0, 5)}...${str.substring(str.length - 5, str.length)}`;
+  return shortenStr;
 };

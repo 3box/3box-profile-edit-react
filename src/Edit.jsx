@@ -52,6 +52,7 @@ class EditProfile extends Component {
       shouldRemoveSpaceProfileImage: false,
       shouldRemoveSpaceCoverPhoto: false,
       shouldShowFIleSizeModal: false,
+      showOptions: false,
 
       coverPhoto: [],
       image: [],
@@ -120,11 +121,6 @@ class EditProfile extends Component {
     if (box !== prevProps.box) this.fetchVerifiedFields();
   }
 
-  handleSwitchProfile = async () => {
-    const { isShowGeneralProfile } = this.state;
-    this.setState({ isShowGeneralProfile: !isShowGeneralProfile });
-  }
-
   fetchVerifiedFields = async () => {
     const { box } = this.props;
 
@@ -160,14 +156,17 @@ class EditProfile extends Component {
 
   closeFileSizeModal = () => this.setState({ shouldShowFIleSizeModal: false });
 
-  onCheckbox = async () => {
-    const { isSpaceProfileDefault } = this.state;
+  handleSelectDefaultProfile = async () => {
+    const { isSpaceProfileDefault, isShowGeneralProfile } = this.state;
     const { space } = this.props;
 
     const value = !isSpaceProfileDefault;
     await space.public.set('isSpaceProfileDefault', value);
 
-    this.setState({ isSpaceProfileDefault: value });
+    this.setState({
+      isSpaceProfileDefault: value,
+      isShowGeneralProfile: !isShowGeneralProfile
+    });
   }
 
   handleUpdatePic = (photoFile, e, type) => {
@@ -328,6 +327,11 @@ class EditProfile extends Component {
     // check custom fields
   }
 
+  handleShowOptionsMenu = () => {
+    const { showOptions } = this.state;
+    this.setState({ showOptions: !showOptions });
+  }
+
   render() {
     const {
       currentUserAddr,
@@ -345,6 +349,7 @@ class EditProfile extends Component {
       isSaveLoading,
       shouldShowFIleSizeModal,
       isShowEmoji,
+      showOptions,
       image,
       coverPhoto,
       verifiedTwitter,
@@ -400,6 +405,7 @@ class EditProfile extends Component {
           space={space}
           isSpaceProfileDefault={isSpaceProfileDefault}
           isSaveLoading={isSaveLoading}
+          showOptions={showOptions}
 
           handleRemovePicture={this.handleRemovePicture}
           coverUpload={this.coverUpload}
@@ -407,10 +413,10 @@ class EditProfile extends Component {
           fileUpload={this.fileUpload}
           handleFormChange={this.handleFormChange}
           handleAddEmoji={this.handleAddEmoji}
-          handleSwitchProfile={this.handleSwitchProfile}
           handleShowEmojiPicker={this.handleShowEmojiPicker}
           handleSubmit={this.handleSubmit}
-          onCheckbox={this.onCheckbox}
+          handleSelectDefaultProfile={this.handleSelectDefaultProfile}
+          handleShowOptionsMenu={this.handleShowOptionsMenu}
 
           {...this.state}
         />
@@ -427,6 +433,7 @@ class EditProfile extends Component {
           shouldRemoveSpaceCoverPhoto={shouldRemoveSpaceCoverPhoto}
           shouldRemoveSpaceProfileImage={shouldRemoveSpaceProfileImage}
           image={image}
+          showOptions={showOptions}
 
           space={space}
           isSpaceProfileDefault={isSpaceProfileDefault}
@@ -442,10 +449,10 @@ class EditProfile extends Component {
           fileUpload={this.fileUpload}
           handleFormChange={this.handleFormChange}
           handleAddEmoji={this.handleAddEmoji}
-          handleSwitchProfile={this.handleSwitchProfile}
           handleShowEmojiPicker={this.handleShowEmojiPicker}
           handleSubmit={this.handleSubmit}
-          onCheckbox={this.onCheckbox}
+          handleSelectDefaultProfile={this.handleSelectDefaultProfile}
+          handleShowOptionsMenu={this.handleShowOptionsMenu}
 
           {...this.state}
         />

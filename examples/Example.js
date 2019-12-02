@@ -49,15 +49,31 @@ class Example extends React.Component {
     const additionalFields = [
       {
         key: 'preferredCoin',
-        field: 'Preferred Coin'
+        field: 'Preferred Coin',
+        inputType: 'dropdown',
+        options: [{
+          value: 'eth',
+          display: 'Ethereum'
+        }, {
+          value: 'btc',
+          display: 'Bitcoin'
+        }, {
+          value: 'ltc',
+          display: 'Litecoin'
+        }]
       }, {
         key: 'backupAddress',
         field: 'Backup Address',
+        inputType: 'text'
       }, {
         key: 'spiritCryptoKittie',
-        field: 'Spirit CryptoKitty'
+        field: 'Spirit CryptoKitty',
+        inputType: 'textarea'
       }
     ];
+
+    // input: text 
+    // elements: select, textarea, 
 
     return (
       <div className="App">

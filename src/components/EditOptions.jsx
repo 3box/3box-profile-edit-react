@@ -131,6 +131,9 @@ EditOptions.propTypes = {
   image: PropTypes.array,
   spaceProfileImage: PropTypes.array,
   currentUserAddr: PropTypes.string,
+  showOptions: PropTypes.bool,
+  isSpaceProfileDefault: PropTypes.bool,
+  handleShowOptionsMenu: PropTypes.func,
 };
 
 EditOptions.defaultProps = {

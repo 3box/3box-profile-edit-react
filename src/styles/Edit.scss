@@ -15,20 +15,6 @@
     font-size: .8em;
   }
 
-  select {
-    border-radius: 5px;
-    border-style: none;
-    border: solid 1px #E4E4E4;
-    background-color: rgb(255, 255, 255);
-    height: 44px;
-    width: 54px;
-    padding: 0 15px;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    display: flex;
-  }
-
   button {
     display: inline-block;
   }
@@ -541,6 +527,19 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   resize: vertical;
+  font-size: 14px;
+}
+
+.edit_profile_value--dropdown {
+  width: 100%;
+  border-radius: 5px;
+  border-style: none;
+  border: solid 1px #E4E4E4;
+  background-color: rgb(255, 255, 255);
+  height: 44px;
+  padding: 0 15px;
+  box-sizing: border-box;
+  display: flex;
   font-size: 14px;
 }
 

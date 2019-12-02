@@ -366,6 +366,8 @@ GeneralProfile.propTypes = {
   isSpaceProfileDefault: PropTypes.bool,
   isShowGeneralProfile: PropTypes.bool,
   isSaveLoading: PropTypes.bool,
+  showOptions: PropTypes.bool,
+  handleShowOptionsMenu: PropTypes.func,
   cancelFunc: PropTypes.func,
   handleRemovePicture: PropTypes.func.isRequired,
   handleUpdatePic: PropTypes.func.isRequired,

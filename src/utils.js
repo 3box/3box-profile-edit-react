@@ -1,6 +1,5 @@
 export const copyToClipBoard = (addr) => {
   try {
-    console.log('clicked')
     const textArea = document.createElement('textarea');
 
     textArea.value = addr;
@@ -11,19 +10,6 @@ export const copyToClipBoard = (addr) => {
     });
     textArea.select();
     document.execCommand('copy');
-
-    // setTimeout(() => {
-    //   dispatch({
-    //     type: 'UI_COPY_SUCCESSFUL',
-    //     copySuccessful: true,
-    //   });
-    // }, 1);
-    // setTimeout(() => {
-    //   dispatch({
-    //     type: 'UI_COPY_SUCCESSFUL',
-    //     copySuccessful: false,
-    //   });
-    // }, 2000);
 
     document.body.removeChild(textArea);
   } catch (err) {

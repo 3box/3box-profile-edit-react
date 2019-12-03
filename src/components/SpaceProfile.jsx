@@ -177,7 +177,7 @@ class SpaceProfile extends Component {
                       <SVG src={InfoIcon} className="edit_profile_verifiedFields_icons" alt="Info" />
                       <div className="edit_profile_verifiedFields_hover">
                         <span className="edit_profile_verifiedFields_info_text">
-                          These fields are saved to your application profile
+                          These fields are saved to your app profile
                         </span>
                       </div>
                     </div>

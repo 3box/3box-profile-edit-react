@@ -23,15 +23,14 @@ export const CustomFields = (props) => {
 
       <div className="edit_profile_keyContainer spaceProfile">
         <p className="edit_profile_keyContainer_currentAddress">
-          SPACE PROFILE
+          APP PROFILE
       </p>
 
         <div className="edit_profile_verifiedFields_info infoIcon">
           <SVG src={InfoIcon} className="edit_profile_verifiedFields_icons" alt="Info" />
           <div className="edit_profile_verifiedFields_hover">
             <span className="edit_profile_verifiedFields_info_text">
-              Data here is saved to the space this current dApp has access to
-          </span>
+              These fields are saved to your app profile          </span>
           </div>
         </div>
       </div>

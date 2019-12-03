@@ -1,6 +1,6 @@
 {
   "name": "3box-profile-edit-react",
-  "version": "0.0.1-beta.1",
+  "version": "0.0.1-beta.2",
   "description": "A drop in component for editing 3Box profiles.",
   "main": "./dist/index.js",
   "author": "3box.io",

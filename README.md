@@ -12,7 +12,7 @@ The `3box-profile-edit-react` node package is a drop-in react component that pro
 
 ## How it Works
 #### Architecture
-The Edit Profile plugin implements simple `set` & `get` methods on both the [Profiles API](https://docs.3box.io/api/profiles) and the [Spaces API](https://docs.3box.io/api/storage) for standard fields (`Name`, `Emoji`, `Description`) depending on which profile the user chooses as their default (`3Box` or `App`), but will use only the Spaces API for custom fields added by the developer passed as a prop to the component. Both methods are made available via the [`3Box.js SDK`](https://github.com/3box/3box-js). After a user has set which default profile they'd like to use, by setting a boolean to the key `isAppProfileDefault` in the space's public store, the dapp should appropriately fetch from that profile elsewhere in the dapp.
+The Edit Profile plugin implements simple `set` & `get` methods on both the [Profiles API](https://docs.3box.io/api/profiles) and the [Spaces API](https://docs.3box.io/api/storage) for standard fields (`name`, `image`, `coverPhoto`, `emoji`, `description`) depending on which profile the user chooses as their default (`3Box` or `App`), but will use only the Spaces API for custom fields added by the developer passed as a prop to the component. Both methods are made available via the [`3Box.js SDK`](https://github.com/3box/3box-js). After a user has set which default profile they'd like to use, by setting a boolean to the key `isAppProfileDefault` in the space's public store, the dapp should appropriately fetch from that profile elsewhere in the dapp.
 
 #### Authentication
 Prior to first render of the Edit Profile component, the dapp should have already run `const box = await Box.openBox(userAddress, ethereumProvider)` and `const space = await box.openSpace(spaceName)` and passed both the `box` and `space` objects as props of the same name.
@@ -23,6 +23,7 @@ Prior to first render of the Edit Profile component, the dapp should have alread
 1. Install the component
 2. Configure application settings and props to component
 3. Usage
+4. Display correct profile in your app
 
 ### 1. Install the component
 
@@ -77,7 +78,8 @@ The Edit Profile component comes standard with `Name`, `Emoji`, and `Description
 </br>
 
 
-### 4. Usage
+### 3. Usage
+The Edit Profile component can of course be used in any way the developer pleases, though we recommend it be used on a dedicated edit profile page or in a popup modal (not included) of the developer's design.  Remember, both the `box` and `space` instance must be passed to the component before it mounts.
 
 #### Example
 
@@ -99,11 +101,34 @@ const MyComponent = ({ customFields, box, space, myAddress, myProfile, redirectF
 );
 ```
 
+### 4. Display correct profile in your app
+Once a user selects a default profile (3Box or app) the decision should reflect elsewhere in your dapp.  To do this, you should check `isAppProfileDefault` flag, then call `get` on the respective profile for fields `name`, `image`, `coverPhoto`, `emoji`, and `description`.  Custom fields added to the Edit Profile component, however, are all saved to the application profile in the `space` used by your dapp and should `get` from there.
+
+Checking and getting from the appropriate default profile should look something like this:
+```javascript
+  const isAppProfileDefault = await space.public.get('isAppProfileDefault');
+  
+  let profile;
+  if (isAppProfileDefault) {
+    profile = await Box.getProfile(currentUserAddr);
+  } else {
+    profile = await space.public.all();
+  }
+
+  this.setState({
+    name: profile.name,
+    image: profile.image,
+    coverPhoto: profile.coverPhoto,
+    emoji: profile.emoji,
+    description: profile.description,
+  })
+```
+
 
 #### Prop Types
 
 | Property | Type            | Required          | Description |
-| :-------------------------------- | :-------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| :-------------------------------- | :-------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- |:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `box`    | Object         |    True   | The `box` instance returned from running `await Box.openBox(address, web3)` somewhere in your dApp.|
 | `space`    | Object         |   True    | The `space` instance returned from running `await box.openSpace(spaceName)` somewhere in your dApp.|
 | `currentUserAddr`    | String (Ethereum Address)             | True| The current user's Ethereum address. Used to fetch the user's profile if it's not provided and for other various uses in the component. |

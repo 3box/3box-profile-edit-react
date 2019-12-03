@@ -29,6 +29,7 @@
     color: white;
     width: 40%;
   }
+
 }
 
 .example_page_header_logo {
@@ -84,5 +85,18 @@
     height: 500px;
     width: calc(100vw - 30px);
     margin: 15px;
+  }
+
+  .example_page_header {
+    padding: 0 30px;
+
+    p {
+      color: white;
+      width: 80%;
+    }
+  }
+
+  p {
+    font-size: 16px;
   }
 }

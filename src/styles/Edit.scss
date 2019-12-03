@@ -1001,10 +1001,6 @@
 
 
 @media only screen and (max-width: 600px) {
-  // .edit_profile_editCanvas_wrapper {
-  //   margin-right: 1em;
-  // }
-
   .modal_container {
     width: 100vw;
     height: 100vh;
@@ -1062,6 +1058,10 @@
   .edit_profile_canvas {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
+  }
+
+  .edit_profile_canvas_overlay{
+    border-radius: 0;
   }
 
   .edit_profile_verifiedWrapper {

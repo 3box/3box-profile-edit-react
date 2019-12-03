@@ -2,14 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import 'emoji-mart/css/emoji-mart.css';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import SVG from 'react-inlinesvg';
 import Box from '3box';
 
 import {
   editProfileFields,
   capitalizeFirstLetter,
   formatIpfsImageObject,
-  // copyToClipBoard,
 } from './utils';
 import { saveCustomFields, saveBasicTextFields } from './helpers';
 
@@ -271,7 +269,6 @@ class EditProfile extends Component {
     } = this.props;
 
     e.preventDefault();
-
     if (!box.public) return;
 
     this.setState({ isSaveLoading: true });
@@ -285,7 +282,7 @@ class EditProfile extends Component {
     if (isPicEdited) {
       const imageObject = formatIpfsImageObject(returnedData);
       await box.public.set('image', imageObject);
-      this.setState({ image: imageObject });
+      this.setState({ image: imageObject, isPicEdited: false });
     }
 
     const fetchCover = isCoverPicEdited && await this.fetchPic(coverBuffer);
@@ -293,7 +290,7 @@ class EditProfile extends Component {
     if (isCoverPicEdited) {
       const imageObject = formatIpfsImageObject(returnedCoverData);
       await box.public.set('coverPhoto', imageObject);
-      this.setState({ coverPhoto: imageObject });
+      this.setState({ coverPhoto: imageObject, isCoverPicEdited: false });
     }
 
     const fetchSpaceImage = isSpacePicEdited && await this.fetchPic(spaceImageBuffer);
@@ -301,15 +298,15 @@ class EditProfile extends Component {
     if (isSpacePicEdited) {
       const imageObject = formatIpfsImageObject(returnedSpaceImageData);
       await space.public.set('image', imageObject);
-      this.setState({ spaceProfileImage: imageObject });
+      this.setState({ spaceProfileImage: imageObject, isSpacePicEdited: false });
     }
-
+    
     const fetchSpaceCover = isSpaceCoverPicEdited && await this.fetchPic(spaceCoverBuffer);
     const returnedSpaceCoverData = isSpaceCoverPicEdited && await fetchSpaceCover.json();
     if (isSpaceCoverPicEdited) {
       const imageObject = formatIpfsImageObject(returnedSpaceCoverData);
       await space.public.set('coverPhoto', imageObject);
-      this.setState({ spaceProfileCoverPhoto: imageObject });
+      this.setState({ spaceProfileCoverPhoto: imageObject, isSpaceCoverPicEdited: false });
     }
 
     if (shouldRemoveImage) await box.public.remove('image');
@@ -382,11 +379,6 @@ class EditProfile extends Component {
 
     return (
       <div className="edit_page">
-        {/* <Prompt
-          when={!isSaveDisabled}
-          message="Continue without saving changes to your profile?"
-        /> */}
-
         <ReactCSSTransitionGroup
           transitionName="app_modals"
           transitionEnterTimeout={300}

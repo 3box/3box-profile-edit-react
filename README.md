@@ -2,7 +2,7 @@
 [![npm](https://img.shields.io/npm/v/3box-chatbox-react.svg?style=for-the-badge)](https://www.npmjs.com/package/3box-profile-edit-react)
 [![Twitter Follow](https://img.shields.io/twitter/follow/3boxdb.svg?style=for-the-badge&label=Twitter)](https://twitter.com/3boxdb)
 
-# 3Box Profile Edit Plugin 💬
+# 3Box Profile Edit Plugin 📝
 
 The `3box-profile-edit-react` node package is a drop-in react component that provides Web3 developers with UI and logic for editing user profiles in their Ethereum application. Quickly add customizable fields that are pertinent to your dapp on top of basic input fields, with the option of `text`, `textarea`, and `select` (dropdown) style inputs. The 3Box Edit Profile plugin is built using 3Box infrastructure. *Read the docs on [docs.3box.io](https://docs.3box.io/build/plugins/chatbox)*.
 

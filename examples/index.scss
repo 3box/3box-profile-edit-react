@@ -24,6 +24,11 @@
     color: white;
     margin: 0;
   }
+
+  p {
+    color: white;
+    width: 40%;
+  }
 }
 
 .example_page_header_logo {
@@ -63,6 +68,10 @@
 @media only screen and (max-width: 768px) {
   .userscontainer {
     width: 100%;
+  }
+
+  .Loading_modal_container {
+    min-width: 100vw;
   }
 
   .example_page {

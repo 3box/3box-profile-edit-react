@@ -78,6 +78,7 @@ class Example extends React.Component {
           <div className="example_page_header">
             <SVG src={Logo} alt="Logo" className="example_page_header_logo" />
             <h2>Edit Profile<br /> Component<br /> Demo</h2>
+            <p>This component is compatible with all web3 providers, though the example only works with injected ones.</p>
           </div>
           <div className="userscontainer">
             {box ? (

@@ -29,7 +29,7 @@ class GeneralProfile extends Component {
       verifiedGithub,
       verifiedEmail,
       isShowEmoji,
-      cancelFunc,
+      redirectFn,
       name,
       handleRemovePicture,
       handleUpdatePic,
@@ -40,14 +40,15 @@ class GeneralProfile extends Component {
       handleShowEmojiPicker,
       spaceProfileImage,
       handleSubmit,
-      additionalFields,
+      customFields,
       space,
-      isSpaceProfileDefault,
+      isAppProfileDefault,
       handleSelectDefaultProfile,
       isSaveLoading,
       isShowGeneralProfile,
       showOptions,
       handleShowOptionsMenu,
+      isSaveSuccessful,
     } = this.props;
 
     const isCoverImage = !!coverPhoto.length || (this.coverUpload && !!this.coverUpload.files.length);
@@ -158,7 +159,7 @@ class GeneralProfile extends Component {
 
               <EditOptions
                 space={space}
-                isSpaceProfileDefault={isSpaceProfileDefault}
+                isAppProfileDefault={isAppProfileDefault}
                 handleSelectDefaultProfile={handleSelectDefaultProfile}
                 spaceProfileImage={spaceProfileImage}
                 image={image}
@@ -314,12 +315,12 @@ class GeneralProfile extends Component {
             </div>
           </div>
 
-          {additionalFields.length ? (
+          {customFields.length ? (
             <CustomFields
-              additionalFields={additionalFields}
+              customFields={customFields}
               handleFormChange={handleFormChange}
               handleSubmit={handleSubmit}
-              cancelFunc={cancelFunc}
+              redirectFn={redirectFn}
               currentUserAddr={currentUserAddr}
               isSaveLoading={isSaveLoading}
               {...this.props}
@@ -327,9 +328,10 @@ class GeneralProfile extends Component {
           ) : (
               <FormControls
                 handleSubmit={handleSubmit}
-                cancelFunc={cancelFunc}
+                redirectFn={redirectFn}
                 currentUserAddr={currentUserAddr}
                 isSaveLoading={isSaveLoading}
+                isSaveSuccessful={isSaveSuccessful}
               />
             )}
         </div>
@@ -342,7 +344,6 @@ GeneralProfile.propTypes = {
   box: PropTypes.object,
   allData: PropTypes.object,
   space: PropTypes.object,
-  currentUser3BoxProfile: PropTypes.object,
   list: PropTypes.array,
   name: PropTypes.string,
   spaceName: PropTypes.string,
@@ -355,7 +356,7 @@ GeneralProfile.propTypes = {
   email: PropTypes.string,
   currentUserAddr: PropTypes.string,
   image: PropTypes.array,
-  additionalFields: PropTypes.array,
+  customFields: PropTypes.array,
   spaceProfileImage: PropTypes.array,
   coverPhoto: PropTypes.array,
   isFetchingThreeBox: PropTypes.bool,
@@ -363,12 +364,13 @@ GeneralProfile.propTypes = {
   isShowEmoji: PropTypes.bool,
   shouldRemoveCoverPhoto: PropTypes.bool,
   shouldRemoveImage: PropTypes.bool,
-  isSpaceProfileDefault: PropTypes.bool,
+  isAppProfileDefault: PropTypes.bool,
   isShowGeneralProfile: PropTypes.bool,
   isSaveLoading: PropTypes.bool,
+  isSaveSuccessful: PropTypes.bool.isRequired,
   showOptions: PropTypes.bool,
   handleShowOptionsMenu: PropTypes.func,
-  cancelFunc: PropTypes.func,
+  redirectFn: PropTypes.func,
   handleRemovePicture: PropTypes.func.isRequired,
   handleUpdatePic: PropTypes.func.isRequired,
   handleAddEmoji: PropTypes.func.isRequired,
@@ -381,7 +383,6 @@ GeneralProfile.propTypes = {
 GeneralProfile.defaultProps = {
   box: {},
   allData: {},
-  currentUser3BoxProfile: {},
   space: {},
   did: '',
   verifiedEmail: '',
@@ -395,11 +396,11 @@ GeneralProfile.defaultProps = {
   currentUserAddr: '',
   image: [],
   coverPhoto: [],
-  additionalFields: [],
+  customFields: [],
   spaceProfileImage: [],
   isFetchingThreeBox: false,
   copySuccessful: false,
-  isSpaceProfileDefault: false,
+  isAppProfileDefault: false,
   isSaveLoading: false,
 };
 

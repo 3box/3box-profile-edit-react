@@ -39,13 +39,14 @@ class EditProfile extends Component {
       buffer: '',
 
       isShowGeneralProfile: true,
-      isSpaceProfileDefault: false,
+      isAppProfileDefault: false,
       isSaveLoading: false,
       isPicEdited: false,
       isCoverPicEdited: false,
       isSpaceCoverPicEdited: false,
       isSpacePicEdited: false,
       isShowEmoji: false,
+      isSaveSuccessful: false,
 
       shouldRemoveImage: false,
       shouldRemoveCoverPhoto: false,
@@ -60,7 +61,7 @@ class EditProfile extends Component {
   }
 
   async componentDidMount() {
-    const { currentUser3BoxProfile, space, currentUserAddr, additionalFields } = this.props;
+    const { currentUser3BoxProfile, space, currentUserAddr, customFields } = this.props;
 
     const generalProfile = currentUser3BoxProfile || await Box.getProfile(currentUserAddr);
     const spaceProfile = await space.public.all();
@@ -73,22 +74,22 @@ class EditProfile extends Component {
       if (spaceValue) this.setState({ [`spaceProfile${capitalizeFirstLetter(fieldSet[0])}`]: spaceValue });
     });
 
-    if (additionalFields.length) {
-      additionalFields.forEach((field) => {
+    if (customFields.length) {
+      customFields.forEach((field) => {
         const spaceValue = spaceProfile[field.key];
         if (spaceValue) this.setState({ [field.key]: spaceValue });
       });
     }
 
-    const isSpaceProfileDefault = await space.public.get('isSpaceProfileDefault');
+    const isAppProfileDefault = await space.public.get('isAppProfileDefault');
 
     this.fetchVerifiedFields();
 
     this.setState({
       originalProfile: generalProfile,
       originalSpaceProfile: spaceProfile,
-      isSpaceProfileDefault,
-      isShowGeneralProfile: !isSpaceProfileDefault,
+      isAppProfileDefault,
+      isShowGeneralProfile: !isAppProfileDefault,
     })
   }
 
@@ -139,6 +140,7 @@ class EditProfile extends Component {
     } catch (error) {
       console.log(error);
     }
+
     try {
       verifiedEmail = await box.verified.email();
     } catch (error) {
@@ -157,14 +159,14 @@ class EditProfile extends Component {
   closeFileSizeModal = () => this.setState({ shouldShowFIleSizeModal: false });
 
   handleSelectDefaultProfile = async () => {
-    const { isSpaceProfileDefault, isShowGeneralProfile } = this.state;
+    const { isAppProfileDefault, isShowGeneralProfile } = this.state;
     const { space } = this.props;
 
-    const value = !isSpaceProfileDefault;
-    await space.public.set('isSpaceProfileDefault', value);
+    const value = !isAppProfileDefault;
+    await space.public.set('isAppProfileDefault', value);
 
     this.setState({
-      isSpaceProfileDefault: value,
+      isAppProfileDefault: value,
       isShowGeneralProfile: !isShowGeneralProfile
     });
   }
@@ -263,7 +265,9 @@ class EditProfile extends Component {
     const {
       box,
       space,
-      additionalFields
+      customFields,
+      currentUserAddr,
+      redirectFn
     } = this.props;
 
     e.preventDefault();
@@ -313,10 +317,18 @@ class EditProfile extends Component {
     if (shouldRemoveSpaceProfileImage) await space.public.remove('image');
     if (shouldRemoveSpaceCoverPhoto) await space.public.remove('coverPhoto');
 
-    await saveCustomFields(space, additionalFields, this.state, originalSpaceProfile);
+    await saveCustomFields(space, customFields, this.state, originalSpaceProfile);
 
     this.setState({ isSaveLoading: false });
-    // add function here to reroute after saving
+
+    if (redirectFn) {
+      redirectFn(currentUserAddr);
+    } else {
+      this.setState({ isSaveSuccessful: true });
+      setTimeout(() => {
+        this.setState({ isSaveSuccessful: false });
+      }, 1500);
+    }
   }
 
   handleHasUpdated = () => {
@@ -335,8 +347,8 @@ class EditProfile extends Component {
   render() {
     const {
       currentUserAddr,
-      cancelFunc,
-      additionalFields,
+      redirectFn,
+      customFields,
       space,
     } = this.props;
 
@@ -356,7 +368,8 @@ class EditProfile extends Component {
       verifiedGithub,
       verifiedEmail,
       isShowGeneralProfile,
-      isSpaceProfileDefault,
+      isAppProfileDefault,
+      isSaveSuccessful,
 
       spaceProfileName,
       spaceProfileDescription,
@@ -399,12 +412,13 @@ class EditProfile extends Component {
           verifiedTwitter={verifiedTwitter}
           verifiedGithub={verifiedGithub}
           verifiedEmail={verifiedEmail}
-          cancelFunc={cancelFunc}
+          redirectFn={redirectFn}
           spaceProfileImage={spaceProfileImage}
-          additionalFields={additionalFields}
+          customFields={customFields}
           space={space}
-          isSpaceProfileDefault={isSpaceProfileDefault}
+          isAppProfileDefault={isAppProfileDefault}
           isSaveLoading={isSaveLoading}
+          isSaveSuccessful={isSaveSuccessful}
           showOptions={showOptions}
 
           handleRemovePicture={this.handleRemovePicture}
@@ -420,6 +434,7 @@ class EditProfile extends Component {
 
           {...this.state}
         />
+
         <SpaceProfile
           isShowGeneralProfile={isShowGeneralProfile}
 
@@ -436,13 +451,14 @@ class EditProfile extends Component {
           showOptions={showOptions}
 
           space={space}
-          isSpaceProfileDefault={isSpaceProfileDefault}
+          isAppProfileDefault={isAppProfileDefault}
+          isSaveSuccessful={isSaveSuccessful}
 
           currentUserAddr={currentUserAddr}
           isShowEmoji={isShowEmoji}
           isSaveLoading={isSaveLoading}
-          cancelFunc={cancelFunc}
-          additionalFields={additionalFields}
+          redirectFn={redirectFn}
+          customFields={customFields}
           handleRemovePicture={this.handleRemovePicture}
           coverUpload={this.coverUpload}
           handleUpdatePic={this.handleUpdatePic}
@@ -466,7 +482,7 @@ EditProfile.propTypes = {
   allData: PropTypes.object,
   space: PropTypes.object,
   currentUser3BoxProfile: PropTypes.object,
-  additionalFields: PropTypes.array,
+  customFields: PropTypes.array,
   name: PropTypes.string,
   verifiedGithub: PropTypes.string,
   verifiedTwitter: PropTypes.string,
@@ -478,7 +494,7 @@ EditProfile.propTypes = {
   image: PropTypes.array,
   coverPhoto: PropTypes.array,
   copySuccessful: PropTypes.bool,
-  cancelFunc: PropTypes.func,
+  redirectFn: PropTypes.func,
 };
 
 EditProfile.defaultProps = {
@@ -496,7 +512,7 @@ EditProfile.defaultProps = {
   currentUserAddr: '',
   image: [],
   coverPhoto: [],
-  additionalFields: [],
+  customFields: [],
   copySuccessful: false,
 };
 

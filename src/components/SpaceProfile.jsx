@@ -25,7 +25,7 @@ class SpaceProfile extends Component {
       spaceProfileEmoji,
       spaceProfileDescription,
       isShowEmoji,
-      cancelFunc,
+      redirectFn,
       handleRemovePicture,
       handleUpdatePic,
       handleAddEmoji,
@@ -34,14 +34,15 @@ class SpaceProfile extends Component {
       shouldRemoveSpaceCoverPhoto,
       handleShowEmojiPicker,
       handleSubmit,
-      additionalFields,
+      customFields,
       space,
-      isSpaceProfileDefault,
+      isAppProfileDefault,
       handleSelectDefaultProfile,
       isSaveLoading,
       isShowGeneralProfile,
       showOptions,
       handleShowOptionsMenu,
+      isSaveSuccessful,
     } = this.props;
 
     const isCoverImage = !!spaceProfileCoverPhoto.length || (this.spaceCoverUpload && !!this.spaceCoverUpload.files.length);
@@ -151,7 +152,7 @@ class SpaceProfile extends Component {
 
               <EditOptions
                 space={space}
-                isSpaceProfileDefault={isSpaceProfileDefault}
+                isAppProfileDefault={isAppProfileDefault}
                 handleSelectDefaultProfile={handleSelectDefaultProfile}
                 image={image}
                 spaceProfileImage={spaceProfileImage}
@@ -254,10 +255,10 @@ class SpaceProfile extends Component {
             </div>
           </div>
 
-          {!!additionalFields.length && (
+          {!!customFields.length && (
             <div className="edit_profile_section">
               <div className="edit_profile_info">
-                {additionalFields.map(entry => (
+                {customFields.map(entry => (
                   <ProfileField
                     customField={entry}
                     handleFormChange={handleFormChange}
@@ -271,7 +272,8 @@ class SpaceProfile extends Component {
 
           <FormControls
             isSaveLoading={isSaveLoading}
-            cancelFunc={cancelFunc}
+            isSaveSuccessful={isSaveSuccessful}
+            redirectFn={redirectFn}
             handleSubmit={handleSubmit}
             currentUserAddr={currentUserAddr}
           />
@@ -285,8 +287,7 @@ SpaceProfile.propTypes = {
   box: PropTypes.object,
   allData: PropTypes.object,
   space: PropTypes.object,
-  currentUser3BoxProfile: PropTypes.object,
-  additionalFields: PropTypes.array,
+  customFields: PropTypes.array,
   spaceProfileName: PropTypes.string,
   spaceName: PropTypes.string,
   verifiedGithub: PropTypes.string,
@@ -302,15 +303,16 @@ SpaceProfile.propTypes = {
   isFetchingThreeBox: PropTypes.bool,
   copySuccessful: PropTypes.bool,
   isShowEmoji: PropTypes.bool,
-  isSpaceProfileDefault: PropTypes.bool,
+  isAppProfileDefault: PropTypes.bool,
   shouldRemoveSpaceProfileImage: PropTypes.bool,
   shouldRemoveUserPic: PropTypes.bool,
   shouldRemoveSpaceCoverPhoto: PropTypes.bool,
   showOptions: PropTypes.bool,
   isShowGeneralProfile: PropTypes.bool,
   isSaveLoading: PropTypes.bool,
+  isSaveSuccessful: PropTypes.bool.isRequired,
   handleShowOptionsMenu: PropTypes.func,
-  cancelFunc: PropTypes.func,
+  redirectFn: PropTypes.func,
   handleRemovePicture: PropTypes.func.isRequired,
   handleUpdatePic: PropTypes.func.isRequired,
   handleAddEmoji: PropTypes.func.isRequired,
@@ -324,7 +326,6 @@ SpaceProfile.defaultProps = {
   box: {},
   allData: {},
   space: {},
-  currentUser3BoxProfile: {},
   verifiedEmail: '',
   verifiedGithub: '',
   verifiedTwitter: '',
@@ -337,11 +338,11 @@ SpaceProfile.defaultProps = {
   image: [],
   spaceProfileImage: [],
   spaceProfileCoverPhoto: [],
-  additionalFields: [],
+  customFields: [],
   isSaveLoading: false,
   isFetchingThreeBox: false,
   copySuccessful: false,
-  isSpaceProfileDefault: false,
+  isAppProfileDefault: false,
   shouldRemoveSpaceCoverPhoto: false,
 };
 

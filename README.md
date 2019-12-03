@@ -1,29 +1,28 @@
 [![Discord](https://img.shields.io/discord/484729862368526356.svg?style=for-the-badge)](https://discordapp.com/invite/Z3f3Cxy)
-[![npm](https://img.shields.io/npm/v/3box-chatbox-react.svg?style=for-the-badge)](https://www.npmjs.com/package/3box-chatbox-react)
+[![npm](https://img.shields.io/npm/v/3box-chatbox-react.svg?style=for-the-badge)](https://www.npmjs.com/package/3box-profile-edit-react)
 [![Twitter Follow](https://img.shields.io/twitter/follow/3boxdb.svg?style=for-the-badge&label=Twitter)](https://twitter.com/3boxdb)
 
-# 3Box Chatbox Plugin 💬
+# 3Box Profile Edit Plugin 💬
 
-`3box-chatbox-react` node package is a drop-in react component that provides Web3 developers with a readymade chat system for their Ethereum application. Easily add rich, decentralized social discourse to your dApp with one line of code. The 3Box Chatbox plugin is built using 3Box infrastructure, and handles all logic for creating a chatbox. *Read the docs on [docs.3box.io](https://docs.3box.io/build/plugins/chatbox)*.
+The `3box-profile-edit-react` node package is a drop-in react component that provides Web3 developers with UI and logic for editing user profiles in their Ethereum application. Quickly add customizable fields that are pertinent to your dapp on top of basic input fields, with the option of `text`, `textarea`, and `select` (dropdown) style inputs. The 3Box Edit Profile plugin is built using 3Box infrastructure. *Read the docs on [docs.3box.io](https://docs.3box.io/build/plugins/chatbox)*.
 
-### Try the demo [here](https://3box.github.io/3box-chatbox/examples/dist/)
-![Example Screenshot](chatbox-example-screenshot.png)
+### Try the demo [here](https://3box.github.io/3box-profile-edit-react/examples/dist/)
+![Example Screenshot](EditProfile.png)
 </br>
 
 ## How it Works
 #### Architecture
-The Chatbox plugin is built using a standard implementation of [Open Threads](https://docs.3box.io/build/web-apps/messaging/choose#open-threads) which are defined in the [3Box Threads API](https://docs.3box.io/api/messaging) and made available via the [`3Box.js SDK`](https://github.com/3box/3box-js). Chatbox messages are ephemeral and are persisted only as long as there is at least one user in the chatbox. The Chatbox plugin includes UI for inputting and displaying both an in-window and pop-up chat and all relevant logic. The component is configurable to various authentication patterns, and can handle both Web3/3Box logged-in & logged-out states. 
+The Edit Profile plugin implements simple `set` & `get` methods on both the [Profiles API](https://docs.3box.io/api/profiles) and the [Spaces API](https://docs.3box.io/api/storage) for standard fields (`Name`, `Emoji`, `Description`) depending on which profile the user chooses as their default (`3Box` or `App`), but will use only the Spaces API for custom fields added by the developer passed as a prop to the component. Both methods are made available via the [`3Box.js SDK`](https://github.com/3box/3box-js). After a user has set which default profile they'd like to use, by setting a boolean to the key `isAppProfileDefault` in the space's public store, the dapp should appropriately fetch from that profile elsewhere in the dapp.
 
 #### Authentication
-The content of the configured chatbox cannot be read until a user has authenticated into their 3Box and joined the ephemeral (`ghost`-type) thread.  After authenticating, a user can post and receive messages from other users in *real-time*.
+Prior to first render of the Edit Profile component, the dapp should have already run `const box = await Box.openBox(userAddress, ethereumProvider)` and `const space = await box.openSpace(spaceName)` and passed both the `box` and `space` objects as props of the same name.
 </br>
 </br>
 
 ## Getting Started
 1. Install the component
-2. Choose your authentication pattern
-3. Configure application settings
-4. Usage
+2. Configure application settings and props to component
+3. Usage
 
 ### 1. Install the component
 
@@ -31,29 +30,7 @@ The content of the configured chatbox cannot be read until a user has authentica
 npm i -S 3box-chatbox-react
 ```
 
-### 2. Choose your authentication pattern
-Depending on *when and how* your dApp handles authentication for web3 and 3Box, you will need to provide a different set of props to the component. Three acceptable authentication patterns and their respective props are discussed below in A-C:
-
-**A) Dapp handles web3 and 3Box logins, and they run *before* component is mounted. (recommended)**
-
-Dapp integrates with `3Box.js SDK` and the `3box-chatbox-react` component. In this case, the `box` instance returned from `Box.openBox(ethAddr)` via 3Box.js should be passed to the `box` prop in the chatbox component. The user's current Ethereum address should be passed to the `currentUserAddr` prop to determine which messages are their own.
-
-**B) Dapp handles web3 and 3Box logins, but they haven't run before component is mounted. (recommended)**
-
-Dapp integrates with `3Box.js SDK` and the `3box-chatbox-react` component. In this case, the login logic implemented in the dapp should be passed to the Chatbox component as the `loginFunction` prop, which is run when a user attempts to post a message. The user's current Ethereum address should be passed to the `currentUserAddr` prop to determine which messages belong to that user.
-
-**C) Dapp has no web3 and 3Box login logic.**
-
-Dapp only integrates with the `3box-chatbox-react` component, but not `3Box.js SDK`. All web3 and 3Box login logic will be handled within the Chatbox component, though it's required for the `ethereum` object from your dapp's preferred web3 provider be passed to the `ethereum` prop in the component.
-
-#### Best practice
-
-For the best UX, we recommend implementing one of the following authentication patterns: A; B; or B with A.
-
-Each of these patterns allow your application to make the `box` object available in global application state where it can be used by all instances of the Chatbox component regardless of which page the user is on. This global pattern removes the need for users to authenticate on each chatbox component, should you decide to have more than one, which would be the case in C.
-
-### 3. Configure application settings
-
+### 2. Configure application settings and props to component
 **First, choose a name for your application's 3Box space.**
 
 Although you are free to choose whichever name you'd like for your app's space, we recommend using the name of your app. If your application already has a 3Box space, you are welcome to use that same one for the chatbox.
@@ -61,6 +38,40 @@ Although you are free to choose whichever name you'd like for your app's space, 
 **Next, choose a naming convention for your application's threads.**
 
 The Chatbox thread needs a name, and we recommend that your application creates `threadNames` according to a simple rule. We generally like using a natural identifier, such as community name, page URL, token ID, or other similar means.
+
+**Then, configure the custom fields you'd like to add to the component**
+
+The `customFields` prop must receive an ***array*** of *any* number of objects in the following structures:
+```javascript
+    { // for a field with a text input
+        inputType: 'text',
+        key: 'backupAddress', // the key used to save the value
+        field: 'Backup Address' // how to display the key in the UI
+      }, 
+
+      { // for a field with a textarea input
+        inputType: 'textarea',
+        key: 'spiritCryptoKittie',
+        field: 'Spirit CryptoKitty'
+      },
+
+      { // for a field with a dropdown input
+        inputType: 'dropdown',
+        key: 'preferredCoin',
+        field: 'Preferred Coin',
+        options: [{ // dropdown input requires an array of objects
+          value: 'eth', // value passed after selection
+          display: 'Ethereum' // what the user will see in the dropdown
+        }, {
+          value: 'btc',
+          display: 'Bitcoin'
+        }, {
+          value: 'ltc',
+          display: 'Litecoin'
+        }]
+      }
+```
+The Edit Profile component comes standard with `Name`, `Emoji`, and `Description` fields.  The component defaults to using the 3Box profile (as the `isAppProfileDefault` boolean in the space is still undefined). Fields passed to `customFields` however will always be saved to the app's space.
 
 </br>
 </br>
@@ -71,38 +82,19 @@ The Chatbox thread needs a name, and we recommend that your application creates 
 #### Example
 
 ```jsx
-import ChatBox from '3box-chatbox-react';
+import EditProfile from '3box-profile-edit-react';
 
-const MyComponent = ({ handleLogin, box, ethereum, myAddress, currentUser3BoxProfile, adminEthAddr }) => (
-    <ChatBox 
+const MyComponent = ({ customFields, box, space, myAddress, myProfile, redirectFn }) => (
+    <EditProfile
         // required
-        spaceName="mySpaceName"
-        threadName="myThreadName"
-
-
-        // Required props for context A) & B)
         box={box}
+        space={space}
         currentUserAddr={myAddress}
 
-        // Required prop for context B)
-        loginFunction={handleLogin}
-
-        // Required prop for context C)
-        ethereum={ethereum}
-
         // optional
-        mute={false}
-        popupChat
-        showEmoji
-        colorTheme="#181F21"
-        currentUser3BoxProfile={currentUser3BoxProfile}
-        userProfileURL={address => `https://mywebsite.com/user/${address}`}
-        spaceOpts={}
-        threadOpts={}
-        agentProfile={
-            chatName: "3Box",
-            imageUrl: "https://imgur.com/RXJO8FD"
-        }
+        customFields={customFields}
+        currentUser3BoxProfile={myProfile}
+        redirectFn={redirectFn}
     />
 );
 ```
@@ -110,23 +102,14 @@ const MyComponent = ({ handleLogin, box, ethereum, myAddress, currentUser3BoxPro
 
 #### Prop Types
 
-| Property | Type          | Default  | Required Case          | Description |
+| Property | Type            | Required          | Description |
 | :-------------------------------- | :-------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `spaceName`    | String        |    |  Always   | Likely your dApp name and / or chatbox category.  A single `spaceName` with different `threadName`s is common practice when building a dApp with multiple Chatbox threads. |
-| `threadName`    | String       |   | Always    | A name specific to this Chatbox. |
-| `box`    | Object         |   | A (and likely B)    | The `box` instance returned from running `await Box.openBox(address, web3)` somewhere in your dApp.|
-| `currentUserAddr`    | String (Ethereum Address)          |    | A & B | The current user's Ethereum address. Passing this will be used to check which messages belong to the current user and can be used for fetching their 3Box profile to render in the Chatbox input UI. |
-| `loginFunction`    | Function       |    | B    | A function from your dApp that handles web3 and 3Box login at the global dApp state. This callback will run when a user attempts to join the Chatbox but a `box` instance doesn't yet exist. Running this function should result in a box instance (from `const box = Box.openBox(address, web3)`) being passed as the `box` prop to this component.  |
-| `ethereum`    | Object        |  window.ethereum  | C    | The `ethereum` object from whichever web3 provider your dApp uses.  The `enable` method on this object will be used to get the current user's Ethereum address and that address will be used to `openBox` within the current Component context.|
-| `popupChat`    | Boolean       |  False   | Optional    | A boolean - `true` - to configure a pop up style chatbox with a button fixed to the bottom right of the window to pop open the chat UI. False will render the component in whichever container you have implemented. |
-| `agentProfile`    | Object       |  { chatName: 'Chatbox', imageUrl: null }   | Optional    | An object with the name of the chatbox which will appear in the `Join thread` step and in the header of the chat UI.  The default `imageUrl` is the provided chat icon. |
-| `spaceOpts`    | Object       | | Optional    | Optional parameters for threads (see [Docs.3box.io](https://Docs.3box.io) for more info)|
-| `threadOpts`    | Object       | | Optional    | Optional parameters for threads (see [Docs.3box.io](https://Docs.3box.io) for more info)|
-| `colorTheme`    | String       |  False  | Optional    | Pass an rgb or hex color string to match the color theme of your application |
-| `mute`    | Boolean       |  False  | Optional    | Pass false to turn off sound for incoming messages. |
-| `showEmoji`    | Boolean       |  False  | Optional    | Pass false to turn off the emoji pop up within the chat input UI. |
-| `currentUser3BoxProfile`    | Object       |   | Optional    | If the current user has already had their 3Box data fetched at the global dApp state, pass the object returned from `Box.getProfile(profileAddress)` to avoid an extra request.  This data will be rendered in the Chatbox input interface.|
-| `userProfileURL`    | Function       |  Defaults to returning user's 3Box profile URL  | Optional    | A function that returns a correctly formatted URL of a user's profile on the current platform.  The function will be passed an Ethereum address within the component, if needed.  A user will be redirected to the URL returned from this function when clicking on the name or Ethereum address associated with the message in the chatbox.|
+| `box`    | Object         |    True   | The `box` instance returned from running `await Box.openBox(address, web3)` somewhere in your dApp.|
+| `space`    | Object         |   True    | The `space` instance returned from running `await box.openSpace(spaceName)` somewhere in your dApp.|
+| `currentUserAddr`    | String (Ethereum Address)             | True| The current user's Ethereum address. Used to fetch the user's profile if it's not provided and for other various uses in the component. |
+| `customFields`    | Array       |        | An array of any amount of objects structured in one of three ways outlined above.  |
+| `currentUser3BoxProfile`    | Object       |       | If passed, it must be the object returned from calling `const currentUser3BoxProfile = await Box.getProfile(myAddress);`.  If this is not passed, the component runs the same static method using the `currentUserAddr` prop |
+| `redirectFn`    | Function      |    | A function that runs after saving the fields in the UI is complete, or when a user hits `cancel`.  The user's ethereum address will be passed as a param in the event that the dapp uses this in the route |
 
 ## License
 

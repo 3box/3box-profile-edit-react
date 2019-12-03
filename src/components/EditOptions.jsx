@@ -11,25 +11,25 @@ class EditOptions extends Component {
     super(props);
     this.state = {
       showOptions: false,
-      isSpaceProfileDefault: false,
+      isAppProfileDefault: false,
     }
   }
 
   componentDidMount() {
-    const { isSpaceProfileDefault } = this.props;
-    this.setState({ isSpaceProfileDefault });
+    const { isAppProfileDefault } = this.props;
+    this.setState({ isAppProfileDefault });
   }
 
   componentDidUpdate(prevProps) {
-    const { isSpaceProfileDefault } = this.props;
-    if (prevProps.isSpaceProfileDefault !== isSpaceProfileDefault) {
-      this.setState({ isSpaceProfileDefault });
+    const { isAppProfileDefault } = this.props;
+    if (prevProps.isAppProfileDefault !== isAppProfileDefault) {
+      this.setState({ isAppProfileDefault });
     }
   }
 
   render() {
     const {
-      isSpaceProfileDefault
+      isAppProfileDefault
     } = this.state;
 
     const {
@@ -64,7 +64,7 @@ class EditOptions extends Component {
           <div className="options_menu_section">
             <div className="options_menu_section_form">
               <div
-                className={`options_menu_section_option ${isSpaceProfileDefault ? '' : 'selected'}`}
+                className={`options_menu_section_option ${isAppProfileDefault ? '' : 'selected'}`}
                 onClick={handleSelectDefaultProfile}
               >
                 <img
@@ -77,7 +77,7 @@ class EditOptions extends Component {
                   3Box Profile
                 </p>
 
-                {!isSpaceProfileDefault ? (
+                {!isAppProfileDefault ? (
                   <SVG
                     src={Check}
                     alt="options"
@@ -87,7 +87,7 @@ class EditOptions extends Component {
               </div>
 
               <div
-                className={`options_menu_section_option ${isSpaceProfileDefault ? 'selected' : ''}`}
+                className={`options_menu_section_option ${isAppProfileDefault ? 'selected' : ''}`}
                 onClick={handleSelectDefaultProfile}
               >
                 <img
@@ -100,7 +100,7 @@ class EditOptions extends Component {
                   App Profile
                 </p>
 
-                {isSpaceProfileDefault ? (
+                {isAppProfileDefault ? (
                   <SVG
                     src={Check}
                     alt="options"
@@ -132,7 +132,7 @@ EditOptions.propTypes = {
   spaceProfileImage: PropTypes.array,
   currentUserAddr: PropTypes.string,
   showOptions: PropTypes.bool,
-  isSpaceProfileDefault: PropTypes.bool,
+  isAppProfileDefault: PropTypes.bool,
   handleShowOptionsMenu: PropTypes.func,
 };
 

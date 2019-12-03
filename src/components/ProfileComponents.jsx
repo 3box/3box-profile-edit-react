@@ -8,12 +8,13 @@ import InfoIcon from '../assets/InfoIcon.svg';
 
 export const CustomFields = (props) => {
   const {
-    additionalFields,
+    customFields,
     handleFormChange,
     handleSubmit,
-    cancelFunc,
+    redirectFn,
     currentUserAddr,
     isSaveLoading,
+    isSaveSuccessful,
   } = props;
 
   return (
@@ -37,7 +38,7 @@ export const CustomFields = (props) => {
 
       <div className="edit_profile_section">
         <div className="edit_profile_info">
-          {additionalFields.map(entry => (
+          {customFields.map(entry => (
             <ProfileField
               customField={entry}
               handleFormChange={handleFormChange}
@@ -50,21 +51,23 @@ export const CustomFields = (props) => {
 
       <FormControls
         handleSubmit={handleSubmit}
-        cancelFunc={cancelFunc}
+        redirectFn={redirectFn}
         currentUserAddr={currentUserAddr}
         isSaveLoading={isSaveLoading}
-      />
+        isSaveSuccessful={isSaveSuccessful}
+        />
     </div>
   );
 };
 
 CustomFields.propTypes = {
   currentUserAddr: PropTypes.string,
-  additionalFields: PropTypes.array,
-  cancelFunc: PropTypes.func,
+  customFields: PropTypes.array,
+  redirectFn: PropTypes.func,
   handleSubmit: PropTypes.func,
   handleFormChange: PropTypes.func,
   isSaveLoading: PropTypes.bool,
+  isSaveSuccessful: PropTypes.bool,
 };
 
 CustomFields.defaultProps = {

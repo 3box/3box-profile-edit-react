@@ -30,9 +30,10 @@ class FormControls extends Component {
   render() {
     const {
       handleSubmit,
-      cancelFunc,
+      redirectFn,
       currentUserAddr,
       isSaveLoading,
+      isSaveSuccessful,
     } = this.props;
     const { copySuccessful } = this.state;
 
@@ -63,22 +64,30 @@ class FormControls extends Component {
         <div className="edit_formControls_content">
           {isSaveLoading && <SVG src={Loading} alt="loading" className="edit_load" />}
 
+          {isSaveSuccessful && (
+            <SVG
+              className="edit_formControls_address_copy"
+              src={Check}
+              alt="Save successful"
+            />
+          )}
+
           <button
             type="submit"
             className="edit_formControls_content_save"
             onClick={(e) => handleSubmit(e)}
           >
             Save
-        </button>
+          </button>
 
 
-          {cancelFunc && (
+          {redirectFn && (
             <button
               className="edit_cancel"
-              onClick={() => cancelFunc(currentUserAddr)}
+              onClick={() => redirectFn(currentUserAddr)}
             >
               Cancel
-          </button>
+            </button>
           )}
         </div>
       </div >
@@ -88,14 +97,16 @@ class FormControls extends Component {
 
 FormControls.propTypes = {
   currentUserAddr: PropTypes.string,
-  cancelFunc: PropTypes.func,
+  redirectFn: PropTypes.func,
   handleSubmit: PropTypes.func,
   isSaveLoading: PropTypes.bool,
+  isSaveSuccessful: PropTypes.bool,
 };
 
 FormControls.defaultProps = {
   currentUserAddr: '',
   isSaveLoading: false,
+  isSaveSuccessful: false,
 };
 
 

@@ -28,17 +28,13 @@ Prior to first render of the Edit Profile component, the dapp should have alread
 ### 1. Install the component
 
 ```shell
-npm i -S 3box-chatbox-react
+npm i -S 3box-profile-edit-react
 ```
 
 ### 2. Configure application settings and props to component
 **First, choose a name for your application's 3Box space.**
 
 Although you are free to choose whichever name you'd like for your app's space, we recommend using the name of your app. If your application already has a 3Box space, you are welcome to use that same one for the chatbox.
-
-**Next, choose a naming convention for your application's threads.**
-
-The Chatbox thread needs a name, and we recommend that your application creates `threadNames` according to a simple rule. We generally like using a natural identifier, such as community name, page URL, token ID, or other similar means.
 
 **Then, configure the custom fields you'd like to add to the component**
 
@@ -107,7 +103,7 @@ Once a user selects a default profile (3Box or app) the decision should reflect 
 Checking and getting from the appropriate default profile should look something like this:
 ```javascript
   const isAppProfileDefault = await space.public.get('isAppProfileDefault');
-  
+
   let profile;
   if (isAppProfileDefault) {
     profile = await Box.getProfile(currentUserAddr);

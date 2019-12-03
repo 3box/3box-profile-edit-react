@@ -1,31 +1,22 @@
 import * as React from "react";
 
-declare class ChatBox extends React.Component<ChatBoxProps, any> { }
+declare class EditProfile extends React.Component<EditProfileProps, any> { }
 
-interface ChatBoxProps {
+interface EditProfileProps {
   box?: [any];
-  spaceOpts?: [any];
-  threadOpts?: [any];
-  loginFunction?: [any];
-  ethereum?: [any];
+  space?: [any];
   currentUser3BoxProfile?: [any];
 
-  mute?: boolean;
-  popupChat?: boolean;
-  showEmoji?: boolean;
-
-  colorTheme: string;
   currentUserAddr?: string;
 
-  agentProfile: {
-    chatName?: string,
-    imageUrl?: string,
-  };
+  redirectFn?: (url: string) => string;
 
-  userProfileURL?: (url: string) => string;
-
-  spaceName: string;
-  threadName: string;
+  customFields: [any][];
+  // customFields: Array<CustomFields>;
 }
 
-export default ChatBox;
+// interface CustomFields extends EditProfileProps {
+//   [index: number]: [any]
+// }
+
+export default EditProfile;

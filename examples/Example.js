@@ -4,6 +4,8 @@ import SVG from 'react-inlinesvg';
 
 import EditProfile from '../src/index';
 import Logo from '../src/assets/3BoxLogoWhite.svg';
+import Loading from '../src/assets/Loading.svg';
+import Mollie from '../src/assets/Mollie.png';
 
 import './index.scss';
 
@@ -78,7 +80,7 @@ class Example extends React.Component {
             <h2>Edit Profile<br /> Component<br /> Demo</h2>
           </div>
           <div className="userscontainer">
-            {box && (
+            {box ? (
               <EditProfile
                 // required
                 box={box}
@@ -88,9 +90,17 @@ class Example extends React.Component {
                 // optional
                 customFields={customFields}
                 currentUser3BoxProfile={myProfile}
-                // redirectFn
+              // redirectFn
               />
-            )}
+            ) : (
+              <div className="Loading_modal_container">
+                <div className="Loading_modal">
+                  <img src={Mollie} alt="Mollie" className="Loading_modal_mollie" />
+                  <h3>Loading profile</h3>
+                  <SVG src={Loading} alt="Logo" className="Loading_modal_load" />
+                </div>
+              </div>
+              )}
           </div>
         </div>
       </div>

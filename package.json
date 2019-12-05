@@ -1,6 +1,6 @@
 {
   "name": "3box-profile-edit-react",
-  "version": "0.0.1-beta.3",
+  "version": "0.0.1-beta.4",
   "description": "A drop in component for editing 3Box profiles.",
   "main": "./dist/index.js",
   "author": "3box.io",
@@ -59,7 +59,7 @@
     "webpack-dev-server": "^3.1.4"
   },
   "peerDependencies": {
-    "3box": "^1.13.2",
+    "3box": "^1.14.0",
     "react": ">= 16.3.0",
     "react-dom": ">= 16.3.0"
   },
@@ -67,7 +67,6 @@
     "babel-core": "7.0.0-bridge.0"
   },
   "dependencies": {
-    "3box": "^1.14.0",
     "3id-resolver": "0.0.6",
     "@babel/runtime": "^7.6.0",
     "async": "^3.1.0",

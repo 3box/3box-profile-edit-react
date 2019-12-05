@@ -9,9 +9,9 @@ interface EditProfileProps {
 
   currentUserAddr?: string;
 
-  redirectFn?: (url: string) => string;
+  redirectFn?: (ethAddr: string) => any;
 
-  customFields: [any][];
+  customFields?: [any][];
   // customFields: Array<CustomFields>;
 }
 

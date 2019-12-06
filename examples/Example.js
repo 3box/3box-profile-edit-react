@@ -90,7 +90,7 @@ class Example extends React.Component {
 
                 // optional
                 customFields={customFields}
-                currentUser3BoxProfile={myProfile}
+                // currentUser3BoxProfile={myProfile}
               // redirectFn
               />
             ) : (

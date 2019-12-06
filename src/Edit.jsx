@@ -93,7 +93,12 @@ class EditProfile extends Component {
 
   async componentDidUpdate(prevProps) {
     const {
-      currentUser3BoxProfile: {
+      currentUser3BoxProfile,
+      box,
+    } = this.props;
+
+    if (currentUser3BoxProfile) {
+      const {
         name,
         email,
         description,
@@ -103,19 +108,21 @@ class EditProfile extends Component {
         emoji,
         image,
         coverPhoto
-      },
-      box,
-    } = this.props;
+      } = currentUser3BoxProfile;
 
-    if (name !== prevProps.currentUser3BoxProfile.name) this.setState({ name });
-    if (email !== prevProps.currentUser3BoxProfile.email) this.setState({ email });
-    if (description !== prevProps.currentUser3BoxProfile.description) this.setState({ description });
-    if (emoji !== prevProps.currentUser3BoxProfile.emoji) this.setState({ emoji });
-    if (image !== prevProps.currentUser3BoxProfile.image) this.setState({ image });
-    if (coverPhoto !== prevProps.currentUser3BoxProfile.coverPhoto) this.setState({ coverPhoto });
-    if (verifiedGithub !== prevProps.currentUser3BoxProfile.verifiedGithub) this.setState({ verifiedGithub });
-    if (verifiedTwitter !== prevProps.currentUser3BoxProfile.verifiedTwitter) this.setState({ verifiedTwitter });
-    if (verifiedEmail !== prevProps.currentUser3BoxProfile.verifiedEmail) this.setState({ verifiedEmail });
+      const noProf = !prevProps.currentUser3BoxProfile;
+      const prevProf = prevProps.currentUser3BoxProfile;
+
+      if ((name && noProf) || name !== prevProf.name) this.setState({ name });
+      if ((email && noProf) || email !== prevProf.email) this.setState({ email });
+      if ((description && noProf) || description !== prevProf.description) this.setState({ description });
+      if ((emoji && noProf) || emoji !== prevProf.emoji) this.setState({ emoji });
+      if ((image && noProf) || image !== prevProf.image) this.setState({ image });
+      if ((coverPhoto && noProf) || coverPhoto !== prevProf.coverPhoto) this.setState({ coverPhoto });
+      if ((verifiedGithub && noProf) || verifiedGithub !== prevProf.verifiedGithub) this.setState({ verifiedGithub });
+      if ((verifiedTwitter && noProf) || verifiedTwitter !== prevProf.verifiedTwitter) this.setState({ verifiedTwitter });
+      if ((verifiedEmail && noProf) || verifiedEmail !== prevProf.verifiedEmail) this.setState({ verifiedEmail });
+    }
 
     if (box !== prevProps.box) this.fetchVerifiedFields();
   }
@@ -300,7 +307,7 @@ class EditProfile extends Component {
       await space.public.set('image', imageObject);
       this.setState({ spaceProfileImage: imageObject, isSpacePicEdited: false });
     }
-    
+
     const fetchSpaceCover = isSpaceCoverPicEdited && await this.fetchPic(spaceCoverBuffer);
     const returnedSpaceCoverData = isSpaceCoverPicEdited && await fetchSpaceCover.json();
     if (isSpaceCoverPicEdited) {
@@ -493,7 +500,7 @@ EditProfile.defaultProps = {
   box: {},
   space: {},
   allData: {},
-  currentUser3BoxProfile: {},
+  currentUser3BoxProfile: null,
   verifiedEmail: '',
   verifiedGithub: '',
   verifiedTwitter: '',

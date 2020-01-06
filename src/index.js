@@ -1,4 +1,4 @@
 import './styles';
-import Edit from './Edit.jsx';
+import Edit from './Edit.js';
 
 export default Edit;

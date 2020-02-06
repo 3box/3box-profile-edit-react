@@ -15,6 +15,7 @@ export const CustomFields = (props) => {
     currentUserAddr,
     isSaveLoading,
     isSaveSuccessful,
+    onSaveComplete,
   } = props;
 
   return (
@@ -52,6 +53,7 @@ export const CustomFields = (props) => {
         handleSubmit={handleSubmit}
         redirectFn={redirectFn}
         currentUserAddr={currentUserAddr}
+        onSaveComplete={onSaveComplete}
         isSaveLoading={isSaveLoading}
         isSaveSuccessful={isSaveSuccessful}
         />
@@ -65,6 +67,7 @@ CustomFields.propTypes = {
   redirectFn: PropTypes.func,
   handleSubmit: PropTypes.func,
   handleFormChange: PropTypes.func,
+  onSaveComplete: PropTypes.func,
   isSaveLoading: PropTypes.bool,
   isSaveSuccessful: PropTypes.bool,
 };

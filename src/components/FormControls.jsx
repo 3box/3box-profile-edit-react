@@ -34,6 +34,7 @@ class FormControls extends Component {
       currentUserAddr,
       isSaveLoading,
       isSaveSuccessful,
+      onSaveComplete,
     } = this.props;
     const { copySuccessful } = this.state;
 
@@ -75,7 +76,10 @@ class FormControls extends Component {
           <button
             type="submit"
             className="edit_formControls_content_save"
-            onClick={(e) => handleSubmit(e)}
+            onClick={async (e) => {
+              await handleSubmit(e);
+              if (onSaveComplete) onSaveComplete(currentUserAddr);
+            }}
           >
             Save
           </button>
@@ -99,6 +103,7 @@ FormControls.propTypes = {
   currentUserAddr: PropTypes.string,
   redirectFn: PropTypes.func,
   handleSubmit: PropTypes.func,
+  onSaveComplete: PropTypes.func,
   isSaveLoading: PropTypes.bool,
   isSaveSuccessful: PropTypes.bool,
 };

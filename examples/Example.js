@@ -30,6 +30,8 @@ class Example extends React.Component {
     const addresses = await window.ethereum.enable();
     const myAddress = addresses[0];
 
+    console.log('ethereum', window.ethereum);
+
     const box = await Box.openBox(myAddress, window.ethereum, {});
     const myProfile = await Box.getProfile(myAddress);
     const space = await box.openSpace(spaceName);
@@ -80,6 +82,7 @@ class Example extends React.Component {
             <h2>Edit Profile<br /> Component<br /> Demo</h2>
             <p>This component is compatible with all web3 providers, though the example only works with injected ones.</p>
           </div>
+
           <div className="userscontainer">
             {box ? (
               <EditProfile
@@ -92,6 +95,7 @@ class Example extends React.Component {
                 customFields={customFields}
               // currentUser3BoxProfile={myProfile}
               // redirectFn
+              // onSaveComplete={(address) => console.log('saved!', address)}
               />
             ) : (
                 <div className="Loading_modal_container">

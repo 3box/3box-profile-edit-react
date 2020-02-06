@@ -252,7 +252,6 @@ class EditProfile extends Component {
   handleSubmit = async (e) => {
     const {
       originalSpaceProfile,
-
       spaceCoverBuffer,
       spaceImageBuffer,
       isPicEdited,
@@ -335,14 +334,6 @@ class EditProfile extends Component {
     }
   }
 
-  handleHasUpdated = () => {
-    // check general basic profile
-    // check space basic profile
-    // check general images
-    // check space images
-    // check custom fields
-  }
-
   handleShowOptionsMenu = () => {
     const { showOptions } = this.state;
     this.setState({ showOptions: !showOptions });
@@ -354,6 +345,7 @@ class EditProfile extends Component {
       redirectFn,
       customFields,
       space,
+      onSaveComplete,
     } = this.props;
 
     const {
@@ -391,8 +383,12 @@ class EditProfile extends Component {
           transitionEnterTimeout={300}
           transitionLeaveTimeout={300}
         >
-          {shouldShowFIleSizeModal
-            && <FileSizeModal show={shouldShowFIleSizeModal} closeFileSizeModal={this.closeFileSizeModal} />}
+          {shouldShowFIleSizeModal && (
+            <FileSizeModal
+              show={shouldShowFIleSizeModal}
+              closeFileSizeModal={this.closeFileSizeModal}
+            />
+          )}
 
           {shouldShowFIleSizeModal && <ModalBackground />}
         </ReactCSSTransitionGroup>
@@ -419,6 +415,7 @@ class EditProfile extends Component {
           isSaveLoading={isSaveLoading}
           isSaveSuccessful={isSaveSuccessful}
           showOptions={showOptions}
+          onSaveComplete={onSaveComplete}
 
           handleRemovePicture={this.handleRemovePicture}
           coverUpload={this.coverUpload}
@@ -452,6 +449,7 @@ class EditProfile extends Component {
           space={space}
           isAppProfileDefault={isAppProfileDefault}
           isSaveSuccessful={isSaveSuccessful}
+          onSaveComplete={onSaveComplete}
 
           currentUserAddr={currentUserAddr}
           isShowEmoji={isShowEmoji}
@@ -494,6 +492,7 @@ EditProfile.propTypes = {
   coverPhoto: PropTypes.array,
   copySuccessful: PropTypes.bool,
   redirectFn: PropTypes.func,
+  onSaveComplete: PropTypes.func,
 };
 
 EditProfile.defaultProps = {

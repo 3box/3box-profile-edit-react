@@ -9,7 +9,8 @@ interface EditProfileProps {
 
   currentUser3BoxProfile?: [any];
   redirectFn?: (ethAddr: string) => any;
-  customFields?: [any][];
+  onSaveComplete?: (ethAddr: string) => any;
+  customFields?: object[];
 }
 
 export default EditProfile;

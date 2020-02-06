@@ -43,6 +43,7 @@ class SpaceProfile extends Component {
       showOptions,
       handleShowOptionsMenu,
       isSaveSuccessful,
+      onSaveComplete,
     } = this.props;
 
     const isCoverImage = !!spaceProfileCoverPhoto.length || (this.spaceCoverUpload && !!this.spaceCoverUpload.files.length);
@@ -276,6 +277,7 @@ class SpaceProfile extends Component {
             redirectFn={redirectFn}
             handleSubmit={handleSubmit}
             currentUserAddr={currentUserAddr}
+            onSaveComplete={onSaveComplete}
           />
         </div>
       </div >
@@ -312,6 +314,7 @@ SpaceProfile.propTypes = {
   isSaveLoading: PropTypes.bool,
   isSaveSuccessful: PropTypes.bool.isRequired,
   handleShowOptionsMenu: PropTypes.func,
+  onSaveComplete: PropTypes.func,
   redirectFn: PropTypes.func,
   handleRemovePicture: PropTypes.func.isRequired,
   handleUpdatePic: PropTypes.func.isRequired,

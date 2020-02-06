@@ -49,6 +49,7 @@ class GeneralProfile extends Component {
       showOptions,
       handleShowOptionsMenu,
       isSaveSuccessful,
+      onSaveComplete,
     } = this.props;
 
     const isCoverImage = !!coverPhoto.length || (this.coverUpload && !!this.coverUpload.files.length);
@@ -320,6 +321,7 @@ class GeneralProfile extends Component {
               customFields={customFields}
               handleFormChange={handleFormChange}
               handleSubmit={handleSubmit}
+              onSaveComplete={onSaveComplete}
               redirectFn={redirectFn}
               currentUserAddr={currentUserAddr}
               isSaveLoading={isSaveLoading}
@@ -328,6 +330,7 @@ class GeneralProfile extends Component {
           ) : (
               <FormControls
                 handleSubmit={handleSubmit}
+                onSaveComplete={onSaveComplete}
                 redirectFn={redirectFn}
                 currentUserAddr={currentUserAddr}
                 isSaveLoading={isSaveLoading}
@@ -369,6 +372,7 @@ GeneralProfile.propTypes = {
   isSaveLoading: PropTypes.bool,
   isSaveSuccessful: PropTypes.bool.isRequired,
   showOptions: PropTypes.bool,
+  onSaveComplete: PropTypes.func,
   handleShowOptionsMenu: PropTypes.func,
   redirectFn: PropTypes.func,
   handleRemovePicture: PropTypes.func.isRequired,

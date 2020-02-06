@@ -130,7 +130,8 @@ Checking and getting from the appropriate default profile should look something 
 | `currentUserAddr`    | String (Ethereum Address)             | True| The current user's Ethereum address. Used to fetch the user's profile if it's not provided and for other various uses in the component. |
 | `customFields`    | Array       |        | An array of any amount of objects structured in one of three ways outlined above.  |
 | `currentUser3BoxProfile`    | Object       |       | If passed, it must be the object returned from calling `const currentUser3BoxProfile = await Box.getProfile(myAddress);`.  If this is not passed, the component runs the same static method using the `currentUserAddr` prop |
-| `redirectFn`    | Function      |    | A function that runs after saving the fields in the UI is complete, or when a user hits `cancel`.  The user's ethereum address will be passed as a param in the event that the dapp uses this in the route |
+| `redirectFn`    | Function      |    | A function that runs after the user hits `cancel`.  If no redirect function has been provided, then the cancel button will not be present in the form.  The user's ethereum address will be passed as a param in the event that the dapp uses this in the route |
+| `onSaveComplete`    | Function      |    | A function that runs after all updated fields in the form have been saved. You may also pass your redirect function to this prop should you choose to. If no function is passed to this prop, the form will save as usual. |
 
 ## License
 

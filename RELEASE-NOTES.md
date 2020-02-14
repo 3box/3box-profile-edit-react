@@ -1,5 +1,8 @@
 # Release Notes
 
+## v0.0.7 - 2020-02-14
+* chore: update 3box to 1.17.0
+
 ## v0.0.6 - 2020-02-06
 * feat: add onSaveComplete prop
 

@@ -1,5 +1,8 @@
 # Release Notes
 
+## v0.0.9 - 2020-04-03
+* chore: update 3box to 1.17.1
+
 ## v0.0.8 - 2020-02-15
 * chore: remove orbit-db dependency
 

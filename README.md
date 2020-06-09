@@ -133,6 +133,9 @@ Checking and getting from the appropriate default profile should look something 
 | `redirectFn`    | Function      |    | A function that runs after the user hits `cancel`.  If no redirect function has been provided, then the cancel button will not be present in the form.  The user's ethereum address will be passed as a param in the event that the dapp uses this in the route |
 | `onSaveComplete`    | Function      |    | A function that runs after all updated fields in the form have been saved. You may also pass your redirect function to this prop should you choose to. If no function is passed to this prop, the form will save as usual. |
 
+## Maintainers
+[@oed](https://github.com/oed)
+
 ## License
 
 MIT
